@@ -35,15 +35,15 @@ local function _run_command(command)
     return results
 end
 
---[[-- get current executing script directory
-function path.get_cesd()
-    local str = debug.getinfo(2, "S").source:sub(2)
+function path.get_cwd()
+    local result = nil
     if platform == os_ext.platforms.windows then
-        return str:match("(.*[/\\])") 
+        result = _run_command('cd')
     else
-        return str:match("(.*/)")
+        result = _run_command('pwd')
     end
-end --]]
+    return result[1]
+end
 
 -- root_directory must be absolute path currently
 function path.list_files(root_directory, include_subdirectories)
