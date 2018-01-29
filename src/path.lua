@@ -1,9 +1,9 @@
 local os_ext = require('os_ext')
-local platform = os_ext.get_platform()
-
 local path = {}
 
-local function _get_windows_command_list_files(root_directory, include_subdirectories)
+-- returns windows specific cmd string to list all files in the root_directory
+-- with the option to also include subdirectories
+local function _wincmd_listfiles(root_directory, include_subdirectories)
     -- /b  removes header/extraneous information
     -- /a-d  defines usage of attribute -d (anything not a directory)
     local command = string.format('dir "%s" /b /a-d', root_directory)
@@ -13,62 +13,70 @@ local function _get_windows_command_list_files(root_directory, include_subdirect
     return command 
 end
 
-local function _get_windows_command_list_directories(root_directory, include_subdirectories)
+-- returns windows specific cmd string to list all directories in the root_directory
+-- with the option to also include subdirectories
+local function _wincmd_listdir(root_directory, include_subdirectories)
     -- /b  removes header/extraneous information
     -- /ad  defines usage of attribute directory
     local command = string.format('dir "%s" /b /ad', root_directory)
     if include_subdirectories then
-        command = command .. '/s'
+        command = command .. ' /s'
     end
     return command
 end
 
-local function _run_command(command)
-    local idx = 0
-    local results = {}
-    local pfile = io.popen(command)
-    for line in pfile:lines() do
-        idx = idx + 1
-        results[idx] = line
-    end
-    pfile:close()
-    return results
-end
-
+-- returns path string of the current (present) working directory
 function path.get_cwd()
     local result = nil
-    if platform == os_ext.platforms.windows then
-        result = _run_command('cd')
+    if os_ext.is_windows then
+        result = os_ext.run_command('cd')
     else
-        result = _run_command('pwd')
+        result = os_ext.run_command('pwd')
     end
     return result[1]
 end
 
--- root_directory must be absolute path currently
-function path.list_files(root_directory, include_subdirectories)
-    assert(type(root_directory), 'string')
-    local command = nil
-    if platform == os_ext.platforms.windows then
-        command = _get_windows_command_list_files(root_directory, include_subdirectories)
+-- returns whether the target_path exists or not
+function path.exists(target_path)
+    assert(type(target_path) == 'string')
+    local result = nil
+    if os_ext.is_windows then
+        result = os_ext.run_command(string.format('if exist "%s" (echo true) else (echo false)', target_path)) 
     else
-        -- TODO: add linux command
-        assert(true == false)
+        result = os_ext.run_command(string.format('if test "%s" then echo true; else echo false; fi', target_path))
     end
-    return _run_command(command) 
+    return result[1] == 'true'
 end
 
 -- root_directory must be absolute path currently
-function path.list_directories(root_directory, include_subdirectories)
-    assert(type(root_directory), 'string')
+function path.list_files(root_directory, include_subdirectories)
+    assert(type(root_directory) == 'string')
+    assert(path.exists(root_directory), 'directory does not exist')
+    
     local command = nil
-    if platform == os_ext.platforms.windows then
-        command = _get_windows_command_list_directories(root_directory, include_subdirectories)
+    if os_ext.is_windows then
+        command = _wincmd_listfiles(root_directory, include_subdirectories)
     else
         -- TODO: add linux command
         assert(true == false)
     end
-    return _run_command(command)
+    return os_ext.run_command(command) 
+end
+
+-- root_directory must be absolute path currently
+function path.list_dir(root_directory, include_subdirectories)
+    assert(type(root_directory), 'string')
+    assert(path.exists(root_directory), 'directory does not exist')
+
+    local command = nil
+    if os_ext.is_windows then
+        command = _wincmd_listdir(root_directory, include_subdirectories)
+    else
+        -- TODO: add linux command
+        assert(true == false)
+    end
+    return os_ext.run_command(command)
 end
 
 return path
+
