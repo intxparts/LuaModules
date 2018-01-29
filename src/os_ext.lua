@@ -16,7 +16,7 @@ os_ext.platform = _separator_platform_table[os_ext.path_separator]
 os_ext.is_windows = os_ext.platform == os_ext.platforms.windows
 os_ext.is_unix = os_ext.platform == os_ext.platforms.unix
 
--- Returns an output table of an command string being invoked
+-- Returns a table of results from a command string being invoked
 function os_ext.run_command(command)
     assert(type(command) == 'string')
     local idx = 0

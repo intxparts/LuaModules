@@ -10,7 +10,7 @@ local function _wincmd_listfiles(root_directory, include_subdirectories)
     if include_subdirectories then
         command = command .. ' /s'
     end
-    return command 
+    return command
 end
 
 -- returns windows specific cmd string to list all directories in the root_directory
@@ -48,7 +48,6 @@ function path.exists(target_path)
     return result[1] == 'true'
 end
 
--- root_directory must be absolute path currently
 function path.list_files(root_directory, include_subdirectories)
     assert(type(root_directory) == 'string')
     assert(path.exists(root_directory), 'directory does not exist')
@@ -60,10 +59,9 @@ function path.list_files(root_directory, include_subdirectories)
         -- TODO: add linux command
         assert(true == false)
     end
-    return os_ext.run_command(command) 
+    return os_ext.run_command(command)
 end
 
--- root_directory must be absolute path currently
 function path.list_dir(root_directory, include_subdirectories)
     assert(type(root_directory), 'string')
     assert(path.exists(root_directory), 'directory does not exist')
