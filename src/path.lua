@@ -1,6 +1,18 @@
 local os_ext = require('os_ext')
 local path = {}
 
+local _windows_invalid_path_chars = {
+    '"',
+    '<',
+    '>',
+    '|',
+    '\0'
+}
+
+for i = 1, 31 do
+    table.insert(_windows_invalid_path_chars, string.char(i))
+end
+
 -- returns windows specific cmd string to list all files in the root_directory
 -- with the option to also include subdirectories
 local function _wincmd_listfiles(root_directory, include_subdirectories)
@@ -75,6 +87,39 @@ function path.list_dir(root_directory, include_subdirectories)
     end
     return os_ext.run_command(command)
 end
+
+local function _has_invalid_chars(str)
+    local char = nil
+    if os_ext.is_windows then
+        for i = 1, string.len(str) do
+            char = str:sub(i, i)
+            for _, c in pairs(_windows_invalid_path_chars) do
+                if char == c then
+                    return true
+                end
+            end
+        end 
+    else
+        -- TODO add linux
+        assert(true == false)
+    end
+    return false
+end
+
+--[[
+function path.combine(...)
+    assert(#arg > 0)
+    local result = ''
+    for i = 1, #arg do
+        assert(arg[i] ~= nil)
+        assert(type(arg[i] == 'string'))
+        assert(string.len(arg[i]) > 0)
+        assert(!_has_invalid_chars(arg[i]), string.format('argument %d, %s', i, arg[i]))
+        result = string.format('%s%s%s', result, os_ext.path_separator, arg[i])
+    end
+    return result
+end
+--]]
 
 return path
 

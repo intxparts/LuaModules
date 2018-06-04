@@ -1,3 +1,4 @@
+local fnl = require('fnl')
 local test_lab = {}
 
 test_lab._current = {
@@ -5,7 +6,7 @@ test_lab._current = {
     tests = {} -- support for tests outside of groups
 }
 
-function test_lab:group(description, fn)
+function test_lab:group(description, fn, tags)
     assert(type(fn) == 'function')
     local child = {
         description = description,
@@ -15,15 +16,13 @@ function test_lab:group(description, fn)
         befores = {},
         tests = {},
         after_eaches = {},
-        afters = {}
+        afters = {},
+        tags = tags or {}
     }
 
     table.insert(self._current.groups, child)
-
     self._current = child
-
     local result, message = pcall(fn)
-
     self._current = child.parent
 
 end
@@ -34,7 +33,6 @@ function test_lab:test(description, fn)
         description = description,
         fn = fn
     }
-
     table.insert(self._current.tests, test)
 end
 
@@ -58,7 +56,7 @@ function test_lab:after_each(fn)
     table.insert(self._current.after_eaches, fn)
 end
 
-function test_lab:run()
+function test_lab:run(tags)
     local successes = 0
     local failures = 0
     print('running unit tests')
@@ -74,8 +72,13 @@ function test_lab:run()
         end
     end
 
-
-    for _i, v in pairs(self._current.groups) do
+    local groups = self._current.groups
+    if tags then
+        local function tag_in_input_tags(_, tag) return fnl.contains_key(tags, tag) end
+        local function group_tags_contain_all_input_tags(_, group) return fnl.all(group.tags, tag_in_input_tags) end
+        groups = fnl.filter(self._current.groups, group_tags_contain_all_input_tags)
+    end
+    for _i, v in pairs(groups) do
         print(v.description)
         for _j, b in pairs(v.befores) do
             local result, message = pcall(b)
