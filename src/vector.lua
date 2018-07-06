@@ -5,7 +5,7 @@ vector.__index = vector
 -- Instance independent functions
 --
 local function vector_new(x, y, z)
-    local v = { x=x, y=y, z=z }
+    local v = { x=x or 0, y=y or 0, z=z or 0}
     setmetatable(v, vector)
     return v
 end
@@ -22,16 +22,16 @@ local function vector_equal(v1, v2)
     return v1.x == v2.x and v1.y == v2.y and v1.z == v2.z
 end
 
-local function vector_mag(v)
-    return math.sqrt(vector_mag2(v))
+local function vector_dot(v1, v2)
+    return v1.x*v2.x + v1.y*v2.y + v1.z*v2.z
 end
 
 local function vector_mag2(v)
     return vector_dot(v, v)
 end
 
-local function vector_dot(v1, v2)
-    return v1.x*v2.x + v1.y*v2.y + v1.z*v2.z
+local function vector_mag(v)
+    return math.sqrt(vector_mag2(v))
 end
 
 local function vector_cross(v1, v2)
