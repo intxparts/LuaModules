@@ -10,16 +10,16 @@ local function vector_new(x, y, z)
     return v
 end
 
+local function vector_zero()
+    return vector_new(0, 0, 0)
+end
+
 local function vector_from_points(p1, p2)
     return vector_new(
         p2.x - p1.x, 
         p2.y - p1.y, 
         p2.z - p1.z
     )
-end
-
-local function vector_equal(v1, v2)
-    return v1.x == v2.x and v1.y == v2.y and v1.z == v2.z
 end
 
 local function vector_dot(v1, v2)
@@ -67,7 +67,7 @@ local function vector_mul(k, v)
 end
 
 local function vector_div(v, k)
-    assert(k ~= 0)
+    assert(k ~= 0, 'error: divide by zero')
     return vector_new(
         v.x / k,
         v.y / k,
@@ -76,12 +76,20 @@ local function vector_div(v, k)
 end
 
 local function vector_idiv(v, k)
-    assert(k ~= 0)
+    assert(k ~= 0, 'error: divide by zero')
     return vector_new(
         v.x // k,
         v.y // k,
         v.z // k
     )
+end
+
+local function vector_equal(v1, v2)
+    return v1.x == v2.x and v1.y == v2.y and v1.z == v2.z
+end
+
+local function vector_tostring(v)
+    return string.format('<%d, %d, %d>', v.x, v.y, v.z)
 end
 
 --
@@ -93,6 +101,7 @@ vector.__mul = vector_mul
 vector.__div = vector_div
 vector.__idiv = vector_idiv
 vector.__eq = vector_equal
+vector.__tostring = vector_tostring
 
 -- 
 -- Module exports
@@ -103,6 +112,7 @@ vector.cross = vector_cross
 vector.mag = vector_mag
 vector.mag2 = vector_mag2
 vector.from_points = vector_from_points
+vector.zero = vector_zero
 
 --
 -- Instance dependent functions
@@ -146,6 +156,12 @@ function vector:_idiv(k)
     self.y = self.y // k
     self.z = self.z // k
     return self
+end
+
+function vector:set(x, y, z)
+    self.x = x
+    self.y = y
+    self.z = z
 end
 
 function vector:mag()
