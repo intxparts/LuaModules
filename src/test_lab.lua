@@ -6,6 +6,10 @@ test_lab._current = {
     tests = {} -- support for tests outside of groups
 }
 
+-- [] need to clean up what is print out to console & make it more readable
+-- [] currently adding print statements to unit tests that are failing do not work - only on ones that succeed - need to fix this
+
+
 function test_lab:group(description, fn, tags)
     assert(type(fn) == 'function')
     local child = {
@@ -57,6 +61,7 @@ function test_lab:after_each(fn)
 end
 
 function test_lab:run(tags)
+    local t_start = os.time()
     local successes = 0
     local failures = 0
     print('running unit tests')
@@ -90,9 +95,12 @@ function test_lab:run(tags)
                 local result, message = pcall(be)
             end
 
-            print(t.description)
             local result, message = pcall(t.fn)
-            print('test_result: ', result)
+            if result then
+                print('.', t.description)
+            else
+                print('x', t.description, message)
+            end
     
             if result then
                 successes = successes + 1
@@ -110,10 +118,14 @@ function test_lab:run(tags)
             local result, message = pcall(a)
         end
     end
+    local t_end = os.time()
     local total_tests = successes + failures
+    print('\n')
+    print('~- Test Summary -~')
     print(total_tests, " tests run total")
     print(successes, " tests passed")
     print(failures, " tests failed")
+    print(os.difftime(t_end, t_start), "seconds to execute")
 end
 
 return test_lab
