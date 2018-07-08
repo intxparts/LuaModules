@@ -18,10 +18,10 @@ local function run_files(files)
     end
 end
 
-args:add_argument('help', 'boolean', {'-h', '--help', '/?'}, 0, false, 'help_info_here')
-args:add_argument('files', 'string', {'-f', '--files'}, '+', false, 'help_info_here')
-args:add_argument('directories', 'string', {'-d', '--directories'}, '+', false, 'help_info_here')
-args:add_argument('tags', 'string', {'-t', '--tags'}, '+', false, 'help_info_here')
+args:add_argument('files', 'string', {'-f', '--files'}, '+', false, 'Run specific unit test files.')
+args:add_argument('directories', 'string', {'-d', '--directories'}, '+', false, 'Run all unit test files in a set of directories.')
+args:add_argument('tags', 'string', {'-t', '--tags'}, '+', false, 'Run only the tests with the provided tags.')
+args:add_argument('help', 'boolean', {'-h', '/?', '--help'}, 0, false, 'Display all available commands.')
 -- verbosity level?
 
 local result, data = pcall(args.parse, args, arg)
