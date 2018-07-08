@@ -87,7 +87,7 @@ function args:parse(a)
                             arg_values[arg_value_idx] = number
 
                         elseif argument.type_info == 'integer' then
-                            local integer = str.to_integer(current_input)
+                            local integer = str.to_int(current_input)
                             if not integer then argument_type_mismatch_error(current_input, argument) end
                             arg_values[arg_value_idx] = integer
 

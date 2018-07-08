@@ -13,13 +13,23 @@ function str.to_bool(s)
     end
 end
 
-function str.to_integer(s)
+function str.to_int(s)
     local number = tonumber(s)
     if number == nil then
         return nil
     end
 
     return math.floor(number)
+end
+
+local function _get_sep_str(sep)
+    if sep == nil then
+        return ''
+    elseif type(sep) == 'string' then
+        return sep
+    else
+        return tostring(sep)
+    end
 end
 
 function str.rep(s, n, sep)
@@ -35,7 +45,7 @@ function str.rep(s, n, sep)
         table.insert(str_table, s)
         i = i + 1
     end
-    local result = table.concat(str_table, sep)
+    local result = table.concat(str_table, _get_sep_str(sep))
     return result
 end
 
@@ -50,15 +60,7 @@ function str.join(t, sep)
         end
     end
 
-    local sep_str = nil
-    if sep == nil then
-        sep_str = ''
-    elseif type(sep) == 'string' then
-        sep_str = sep
-    else
-        sep_str = tostring(sep)
-    end
-    return table.concat(str_table, sep_str)
+    return table.concat(str_table, _get_sep_str(sep))
 end
 
 return str

@@ -5,6 +5,21 @@ local str = require('str')
 
 test_lab:group('str.rep ->', function()
     
+    test_lab:test('nil args', function()
+        local result, message = pcall(function() local s = str.rep() end)
+        assert(result == false)
+    end)
+
+    test_lab:test('nil for string', function()
+        local result, message = pcall(function() local s = str.rep(nil, 2) end)
+        assert(result == false)
+    end)
+
+    test_lab:test('nil for replication count', function()
+        local result, message = pcall(function() local s = str.rep('hello', nil) end)
+        assert(result == false)
+    end)
+
     test_lab:test('replicate single char string', function()
         assert('-----' == str.rep('-', 5))
     end)
@@ -95,6 +110,68 @@ test_lab:group('str.join ->', function()
         local sep_format = setmetatable({}, format)
 
         assert('col1 | col2 | col3' == str.join({'col1', 'col2', 'col3'}, sep_format))
+    end)
+
+end)
+
+test_lab:group('str.to_bool ->', function()
+
+    local non_str_types = { true, 0, {}}
+    for _, v in pairs(non_str_types) do
+        test_lab:test(string.format('str.to_bool(%s)', type(v)), function()
+            assert(nil == str.to_bool(v))
+        end)
+    end
+    test_lab:test('str.to_bool(nil)', function()
+        assert(nil == str.to_bool(nil))
+    end)
+
+    local invalid_strs = {'', ' ', 'True', 'False', 'random', '10', '.true'}
+    for _, v in pairs(invalid_strs) do
+        test_lab:test(string.format('str.to_bool("%s")', v), function()
+            assert(nil == str.to_bool(v))
+        end)
+    end
+
+    test_lab:test('str.to_bool(true)', function()
+        assert(true == str.to_bool('true'))
+    end)
+
+    test_lab:test('str.to_bool(false)', function()
+        assert(false == str.to_bool('false'))
+    end)
+end)
+
+test_lab:group('str.to_int ->', function()
+    local non_number_str_types = {true, {}}
+
+    for _, v in pairs(non_number_str_types) do
+        test_lab:test(string.format('str.to_int(%s)', type(v)), function()
+            assert(nil == str.to_int(v))
+        end)
+    end
+
+    local invalid_strs = {'hello', '', ' ', '10%', '-.'}
+    for _, v in pairs(invalid_strs) do
+        test_lab:test(string.format('str.to_int(%s)', v), function()
+            assert(nil == str.to_int(v))
+        end)
+    end
+
+    test_lab:test('str.to_int(-5.67)', function()
+        assert(-6 == str.to_int(-5.67))
+    end)
+
+    test_lab:test('str.to_int(1.79)', function()
+        assert(1 == str.to_int(1.79))
+    end)
+
+    test_lab:test('str.to_int("-5.67")', function()
+        assert(-6 == str.to_int("-5.67"))
+    end)
+
+    test_lab:test('str.to_int("1.79")', function()
+        assert(1 == str.to_int("1.79"))
     end)
 
 end)
