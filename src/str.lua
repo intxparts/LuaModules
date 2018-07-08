@@ -25,6 +25,10 @@ end
 function str.rep(s, n, sep)
     assert(type(s) == 'string')
     assert(type(n) == 'number')
+    if n <= 1 then
+        return s
+    end
+
     local str_table = {}
     local i = 0
     while i < n do
@@ -35,8 +39,26 @@ function str.rep(s, n, sep)
     return result
 end
 
-function str.join(...)
-    return table.concat(arg)
+function str.join(t, sep)
+    assert(type(t) == 'table')
+    local str_table = {}
+    for _, v in ipairs(t) do
+        if type(v) == 'string' then
+            table.insert(str_table, v)
+        else
+            table.insert(str_table, tostring(v))
+        end
+    end
+
+    local sep_str = nil
+    if sep == nil then
+        sep_str = ''
+    elseif type(sep) == 'string' then
+        sep_str = sep
+    else
+        sep_str = tostring(sep)
+    end
+    return table.concat(str_table, sep_str)
 end
 
 return str
