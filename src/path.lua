@@ -73,8 +73,8 @@ function path.exists(target_path)
     if os_ext.is_windows then
         result = os_ext.run_command(string.format('if exist "%s" (echo true) else (echo false)', target_path))[1] == 'true'
     else
-        result = os_ext.run_command(string.format('if test -f "%s" then; echo true; else echo false; fi', target_path))[1] == 'true' or
-            os_ext.run_command(string.format('if test -d "%s" then; echo true; else echo false; fi', target_path))[1] == 'true'
+        result = os_ext.run_command(string.format('if test -f "%s"; then echo true; else echo false; fi', target_path))[1] == 'true' or
+            os_ext.run_command(string.format('if test -d "%s"; then echo true; else echo false; fi', target_path))[1] == 'true'
     end
     return result
 end
