@@ -4,11 +4,13 @@ local str = require('str')
 local args = {}
 args.__index = args
 args._arguments = {}
+args._i = 1
 
 function args:add_argument(arg_name, type_info, flags, nargs, required, help, default)
     assert(type(arg_name) == 'string')
     assert(type(type_info) == 'string')
     assert(type(nargs) == 'string' or type(nargs) == 'number')
+    assert(flags ~= nil and type(flags) == 'table', "flags must be a valid table")
     local argument = {
         arg_name = arg_name,
         type_info = type_info,
@@ -18,22 +20,15 @@ function args:add_argument(arg_name, type_info, flags, nargs, required, help, de
         help = help, -- or generateHelp(arg_name),
         default = default
     }
-    assert(self._arguments[arg_name] == nil)
-    self._arguments[arg_name] = argument
+    assert(self._arguments[self._i] == nil)
+    self._arguments[self._i] = argument
+    self._i = self._i + 1
 end
 
 function args:parse(a)
-    return self:_verify(a)
-end
-
-function args:print_help()
-    print('tbd - args:print_help()')
-end
-
-function args:_verify(a)
     assert(type(a) == 'table')
     local inputs = a or {}
-    local function invalid_argument_error(input, argument)
+    local function argument_type_mismatch_error(input, argument)
       error(
             string.format(
                 'expected value: %d to be of type %q for argument %q',
@@ -44,18 +39,17 @@ function args:_verify(a)
         )
     end
     local arguments = {}
-    for arg_name, argument in pairs(self._arguments) do
+    for i, argument in ipairs(self._arguments) do
         local arg_name_count = fnl.count(inputs, function(_, v) return fnl.any(argument.flags, function(_, flag) return flag == v end) end)
-        assert(arg_name_count < 2, string.format('multiple counts of the same argument not supported: %q', arg_name))
+        assert(arg_name_count < 2, string.format('multiple counts of the same argument not supported: %q', argument.arg_name))
         
         if argument.required then
-            assert(arg_name_count > 0, string.format('missing required argument %q', arg_name))
+            assert(arg_name_count > 0, string.format('missing required argument %q', argument.arg_name))
         end
 
         if arg_name_count > 0 then
             local min_required_nargs = 0
             local max_nargs = 256
-
 
             if type(argument.nargs) == 'string' then
                 if argument.nargs == '+' then
@@ -74,15 +68,12 @@ function args:_verify(a)
                 max_nargs = argument.nargs
             end
 
-
             if max_nargs == 0 then
                 arguments[argument.arg_name] = true
                 goto continue_next_argument
             end
 
-
             for i, input in ipairs(inputs) do
-
 
                 if fnl.any(argument.flags, function(_, flag) return flag == input end) then
                     local arg_values = {}
@@ -91,31 +82,25 @@ function args:_verify(a)
                         local current_input = inputs[i + arg_value_idx]
       
                         if argument.type_info == 'number' then 
-                            
                             local number = tonumber(current_input)
-                            if not number then invalid_argument_error(current_input, argument) end
+                            if not number then argument_type_mismatch_error(current_input, argument) end
                             arg_values[arg_value_idx] = number
 
                         elseif argument.type_info == 'integer' then
-                            
                             local integer = str.to_integer(current_input)
-                            if not integer then invalid_argument_error(current_input, argument) end
+                            if not integer then argument_type_mismatch_error(current_input, argument) end
                             arg_values[arg_value_idx] = integer
 
                         elseif argument.type_info == 'string' then
-                            
                             arg_values[arg_value_idx] = current_input
 
                         elseif argument.type_info == 'boolean' then
-                            
                             local bool = str.to_bool(current_input)
-                            if not bool then invalid_argument_error(current_input, argument) end
+                            if not bool then argument_type_mismatch_error(current_input, argument) end
                             arg_values[arg_value_idx] = bool
 
                         else
-
                             arg_values[arg_value_idx] = nil
-
                         end
                         
                         arg_value_idx = arg_value_idx + 1
@@ -145,6 +130,20 @@ function args:_verify(a)
 
     end -- for loop argument
     return arguments
+end
+
+function args:print_help()
+    local str_format = "%-15s | %-3s | %-25s | %-60s"
+    print(string.format(str_format, "Argument", "Req", "Flags", "Description"))
+    print(str.rep('-', 100))
+    for i, v in ipairs(self._arguments) do
+        local required_str = ' '
+        if v.required then
+            required_str = '.'
+        end
+        local flag_str = table.concat(v.flags, ",  ")
+        print(string.format(str_format, v.arg_name, required_str, flag_str, v.help))
+    end
 end
 
 return args
