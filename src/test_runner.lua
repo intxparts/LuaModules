@@ -9,7 +9,7 @@ local function run_files(files)
         end
         
         if not path.exists(f) then
-            print(string.format('provided file path %q does not exist'), f)
+            print(string.format('provided file path %q does not exist', f))
             return
         end
         -- might need to wrap this in pcall
