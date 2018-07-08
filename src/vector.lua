@@ -75,15 +75,6 @@ local function vector_div(v, k)
     )
 end
 
-local function vector_idiv(v, k)
-    assert(k ~= 0, 'error: divide by zero')
-    return vector_new(
-        v.x // k,
-        v.y // k,
-        v.z // k
-    )
-end
-
 local function vector_equal(v1, v2)
     return v1.x == v2.x and v1.y == v2.y and v1.z == v2.z
 end
@@ -99,7 +90,6 @@ vector.__add = vector_add
 vector.__sub = vector_sub
 vector.__mul = vector_mul
 vector.__div = vector_div
-vector.__idiv = vector_idiv
 vector.__eq = vector_equal
 vector.__tostring = vector_tostring
 
@@ -147,14 +137,6 @@ function vector:_div(k)
     self.x = self.x / k
     self.y = self.y / k
     self.z = self.z / k
-    return self
-end
-
--- v1 = v1 // k
-function vector:_idiv(k)
-    self.x = self.x // k
-    self.y = self.y // k
-    self.z = self.z // k
     return self
 end
 

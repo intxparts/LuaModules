@@ -264,31 +264,6 @@ test_lab:group('vector.__div ->', function()
     end)
 end)
 
-test_lab:group('vector.__idiv ->', function()
-    test_lab:test('v // 0 = error(divide by zero)', function()
-        local v1 = vector.new(1, 0, 0)
-        local result, message = pcall(function() local v2 = v1 // 0 end)
-        assert(result == false)
-        assert(string.find(message, 'error: divide by zero'))
-    end)
-
-    test_lab:test('v // 1 = <floor(v.x), floor(v.y), floor(v.z)>', function()
-        local v1 = vector.new(1.2, 0, -3.42)
-        local actual = v1 // 1
-        assert(vector.new(math.floor(v1.x), math.floor(v1.y), math.floor(v1.z)) == actual)
-        -- remove the vector metatable to compare that the tables are indeed different instances of vector
-        setmetatable(v1, nil)
-        setmetatable(actual, nil)
-        assert(v1 ~= actual)
-    end)
-
-    test_lab:test('v // 2 = <floor(v.x / 2), floor(v.y / 2), floor(v.z / 2)>', function()
-        local v1 = vector.new(4.2, 1, -2.3)
-        local actual = v1 // 2
-        assert(vector.new(math.floor(v1.x / 2), math.floor(v1.y / 2), math.floor(v1.z / 2)) == actual)
-    end)
-end)
-
 test_lab:group('vector.__tostring ->', function()
     test_lab:test('tostring(zero()) = <0, 0, 0>', function()
         assert(tostring(vector.new(0, 0, 0)) == '<0, 0, 0>')
@@ -374,21 +349,6 @@ test_lab:group('vector:_div ->', function()
         local v1 = vector.new(2, -3, 1)
         local actual = v1:_div(2)
         local expected = vector.new(1, -1.5, 0.5)
-        assert(expected == v1)
-        assert(expected == actual)
-
-        -- remove the vector metatable to compare that the tables are indeed the same instance of vector
-        setmetatable(v1, nil)
-        setmetatable(actual, nil)
-        assert(v1 == actual)
-    end)
-end)
-
-test_lab:group('vector:_idiv ->', function()
-    test_lab:test('divide current vector by a scalar', function()
-        local v1 = vector.new(2, -3, 1)
-        local actual = v1:_idiv(2)
-        local expected = vector.new(1, -2, 0)
         assert(expected == v1)
         assert(expected == actual)
 

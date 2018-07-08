@@ -98,7 +98,7 @@ test_lab:group('str.join ->', function()
     end)
 
     test_lab:test('join strings with numerical separator', function()
-        assert('col10.0col20.0col3' == str.join({'col1', 'col2', 'col3'}, 0.0))
+        assert('col10col20col3' == str.join({'col1', 'col2', 'col3'}, 0))
     end)
 
     test_lab:test('join strings with boolean separator', function()
