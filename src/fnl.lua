@@ -98,11 +98,15 @@ end
 
 local function fnl_count(t, fn)
     assert(type(t) == 'table')
-    assert(type(fn) == 'function')
+    local _fn = fn
+    if not _fn then
+        _fn = function() return true end
+    end
+    assert(type(_fn) == 'function')
 
     local count = 0
     for k, v in pairs(t) do
-        if fn(k, v) then
+        if _fn(k, v) then
             count = count + 1
         end
     end
