@@ -4,12 +4,12 @@ local function fnl_clone(t)
     assert(type(t) == 'table')
     local copy = {}
     for k, v in pairs(t) do
-        copy[k] = v 
+        copy[k] = v
     end
     return copy
 end
 
-local function fnl_map(t, fn)
+local function fnl_apply(t, fn)
     assert(type(t) == 'table')
     assert(type(fn) == 'function')
 
@@ -26,8 +26,8 @@ local function fnl_filter(t, fn)
 
     local r = {}
     for k, v in pairs(t) do
-        if fn(k, v) then 
-            r[k] = v 
+        if fn(k, v) then
+            r[k] = v
         end
     end
     return r
@@ -36,7 +36,7 @@ end
 local function fnl_any(t, fn)
     assert(type(t) == 'table')
     assert(type(fn) == 'function')
-    
+
     for k, v in pairs(t) do
         if fn(k, v) then
             return true
@@ -116,7 +116,7 @@ end
 fnl.filter = fnl_filter
 fnl.all = fnl_all
 fnl.any = fnl_any
-fnl.map = fnl_map
+fnl.apply = fnl_apply
 fnl.clone = fnl_clone
 fnl.reduce = fnl_reduce
 fnl.count = fnl_count
