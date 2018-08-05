@@ -12,7 +12,7 @@ test_lab:group('vector.new ->', function()
     -- ensure the default vector is the origin (0,0,0)
     test_lab:test('create new vector with no args', function()
         local v1 = vector.new()
-        
+
         assert(v1.x == 0 and v1.y == 0 and v1.z == 0)
     end)
 
@@ -21,7 +21,7 @@ test_lab:group('vector.new ->', function()
         local v1 = vector.new(0, 1, 0)
         local v2 = vector.new(0, 0, 1)
         assert(v1.x == 0 and v1.y == 1 and v1.z == 0)
-        assert(v2.x == 0 and v2.y == 0 and v2.z == 1)        
+        assert(v2.x == 0 and v2.y == 0 and v2.z == 1)
     end)
 end)
 
