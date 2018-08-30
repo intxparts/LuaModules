@@ -1,4 +1,4 @@
-local fnl = require('fnl')
+local tbl = require('tbl')
 local str = require('str')
 
 local args = {}
@@ -40,7 +40,7 @@ function args:parse(a)
     end
     local arguments = {}
     for i, argument in ipairs(self._arguments) do
-        local arg_name_count = fnl.count(inputs, function(_, v) return fnl.any(argument.flags, function(_, flag) return flag == v end) end)
+        local arg_name_count = tbl.count(inputs, function(_, v) return tbl.any(argument.flags, function(_, flag) return flag == v end) end)
         assert(arg_name_count < 2, string.format('multiple counts of the same argument not supported: %q', argument.arg_name))
         
         if argument.required then
@@ -75,7 +75,7 @@ function args:parse(a)
 
             for i, input in ipairs(inputs) do
 
-                if fnl.any(argument.flags, function(_, flag) return flag == input end) then
+                if tbl.any(argument.flags, function(_, flag) return flag == input end) then
                     local arg_values = {}
                     local arg_value_idx = 1
                     while arg_value_idx + i <= #inputs and self._arguments[ inputs[i + arg_value_idx] ] == nil do
@@ -123,7 +123,7 @@ function args:parse(a)
                         arguments[argument.arg_name] = { argument.default }
                     end -- else
                     break
-                end -- if fnl.any flags
+                end -- if tbl.any flags
             end -- for loop inputs
         end --if arg_name_count > 0
         ::continue_next_argument::
