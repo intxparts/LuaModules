@@ -98,11 +98,12 @@ end
 
 local function tbl_count(t, fn)
     assert(type(t) == 'table')
+    local fn_type = type(fn)
+    assert(fn_type == 'function' or fn_type == 'nil')
     local _fn = fn
     if not _fn then
         _fn = function() return true end
     end
-    assert(type(_fn) == 'function')
 
     local count = 0
     for k, v in pairs(t) do
@@ -113,29 +114,89 @@ local function tbl_count(t, fn)
     return count
 end
 
-local function tbl_equal(t1, t2, data_only, deep_compare)
+local function tbl_deep_equal(t1, t2)
     assert(type(t1) == 'table')
     assert(type(t2) == 'table')
     if tbl_count(t1) ~= tbl_count(t2) then
         return false
     end
-    local t1_mt = getmetatable(t1)
-    local t2_mt = getmetatable(t2)
-    if t1_mt ~= t2_mt then
-        return false
-    end
-    if t1_mt then
-        for k, v in pairs(t1_mt) do
-            print(k, v)
-        end
-    end
-    for k, v in pairs(t1) do
-        print(k, v)
-        if (t2[k] == nil or t2[k] ~= v) then
+    for k, t1_k in pairs(t1) do
+        t1_k_type = type(t1_k)
+        if t1_k_type ~= type(t2[k]) then
             return false
         end
+
+        if t1_k_type == 'table' then
+            if not tbl_deep_equal(t1_k, t2[k]) then
+                return false
+            end
+        -- elseif t1_k_type == 'function' or
+        --     t1_k_type == 'userdata' or
+        --     t1_k_type == 'thread' then
+        --     goto next_property_continue
+        else
+            if t1_k ~= t2[k] then
+                return false
+            end
+        end
+        -- ::next_property_continue::
     end
     return true
+end
+
+local _tbl = {}
+_tbl.__index = _tbl
+
+function _tbl.new(t)
+    local t_type = type(t)
+    assert(t_type == 'table' or t_type == 'nil')
+    local wrp = t or {}
+    setmetatable(wrp, _tbl)
+    return wrp
+end
+
+function _tbl:filter(fn)
+    return tbl_filter(self, fn)
+end
+
+function _tbl:all(fn)
+    return tbl_all(t, fn)
+end
+
+function _tbl:any(fn)
+    return tbl_any(self, fn)
+end
+
+function _tbl:apply(fn)
+    return tbl_apply(self, fn)
+end
+
+function _tbl:clone()
+    return tbl_clone(self)
+end
+
+function _tbl:reduce(fn, first)
+    return tbl_reduce(self, fn, first)
+end
+
+function _tbl:count(fn)
+    return tbl_count(self, fn)
+end
+
+function _tbl:contains_value(v)
+    return tbl_contains_value(self, v)
+end
+
+function _tbl:contains_key(k)
+    return tbl_contains_key(self, k)
+end
+
+function _tbl:deep_equal(t)
+    return tbl_deep_equal(self, t)
+end
+
+local function tbl_wrap(t)
+    return _tbl.new(t)
 end
 
 tbl.filter = tbl_filter
@@ -147,6 +208,7 @@ tbl.reduce = tbl_reduce
 tbl.count = tbl_count
 tbl.contains_key = tbl_contains_key
 tbl.contains_value = tbl_contains_value
-tbl.equal = tbl_equal
+tbl.deep_equal = tbl_deep_equal
+tbl.wrap = tbl_wrap
 
 return tbl
