@@ -23,11 +23,10 @@ end
 local function tbl_filter(t, fn)
     assert(type(t) == 'table')
     assert(type(fn) == 'function')
-
     local r = {}
     for k, v in pairs(t) do
         if fn(k, v) then
-            r[k] = v
+            table.insert(r, v)
         end
     end
     return r
