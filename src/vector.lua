@@ -16,8 +16,8 @@ end
 
 local function vector_from_points(p1, p2)
     return vector_new(
-        p2.x - p1.x, 
-        p2.y - p1.y, 
+        p2.x - p1.x,
+        p2.y - p1.y,
         p2.z - p1.z
     )
 end
@@ -37,7 +37,7 @@ end
 local function vector_cross(v1, v2)
     return vector_new(
         v1.y*v2.z - v1.z*v2.y,
-        v1.z*v2.x - v1.x*v2.z, 
+        v1.z*v2.x - v1.x*v2.z,
         v1.x*v2.y - v1.y*v2.x
     )
 end

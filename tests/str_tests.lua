@@ -4,7 +4,7 @@ local test_lab = require('test_lab')
 local str = require('str')
 
 test_lab:group('str.rep ->', function()
-    
+
     test_lab:test('nil args', function()
         local result, message = pcall(function() local s = str.rep() end)
         assert(result == false)
