@@ -505,17 +505,3 @@ test_lab:group('tbl.reduce(t [table], fn [function], first [any]) -> [any]', fun
     end)
 
 end)
-
-test_lab:group('table wrapped ->', function()
-    test_lab:test('t1:deep_equal(t2)', function()
-        local t1 = tbl.wrap({1, 2, 3})
-        local t2 = tbl.wrap({1, 2, 3})
-        assert(t1:deep_equal(t2))
-    end)
-
-    test_lab:test('t1:clone()', function()
-        local t1 = tbl.wrap({1, 2, 3})
-        local t2 = t1:clone()
-        assert(t1:deep_equal(t2))
-    end)
-end)

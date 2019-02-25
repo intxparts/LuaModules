@@ -143,61 +143,6 @@ local function tbl_deep_equal(t1, t2)
     return true
 end
 
-local _tbl = {}
-_tbl.__index = _tbl
-
-function _tbl.new(t)
-    local t_type = type(t)
-    assert(t_type == 'table' or t_type == 'nil')
-    local wrp = t or {}
-    setmetatable(wrp, _tbl)
-    return wrp
-end
-
-function _tbl:filter(fn)
-    return tbl_filter(self, fn)
-end
-
-function _tbl:all(fn)
-    return tbl_all(t, fn)
-end
-
-function _tbl:any(fn)
-    return tbl_any(self, fn)
-end
-
-function _tbl:apply(fn)
-    return tbl_apply(self, fn)
-end
-
-function _tbl:clone()
-    return tbl_clone(self)
-end
-
-function _tbl:reduce(fn, first)
-    return tbl_reduce(self, fn, first)
-end
-
-function _tbl:count(fn)
-    return tbl_count(self, fn)
-end
-
-function _tbl:contains_value(v)
-    return tbl_contains_value(self, v)
-end
-
-function _tbl:contains_key(k)
-    return tbl_contains_key(self, k)
-end
-
-function _tbl:deep_equal(t)
-    return tbl_deep_equal(self, t)
-end
-
-local function tbl_wrap(t)
-    return _tbl.new(t)
-end
-
 tbl.filter = tbl_filter
 tbl.all = tbl_all
 tbl.any = tbl_any
