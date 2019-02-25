@@ -7,7 +7,7 @@ local function run_files(files)
         if not string.match(f, '.lua') then
             goto continue_files
         end
-        
+
         if not path.exists(f) then
             print(string.format('provided file path %q does not exist', f))
             return
@@ -50,4 +50,9 @@ if data['directories'] then
     end
 end
 
-test_lab:run()
+local tags = {}
+if data['tags'] then
+    tags = data['tags']
+end
+
+test_lab:run(tags)

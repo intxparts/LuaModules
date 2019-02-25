@@ -88,7 +88,7 @@ function test_lab:run(tags)
         for _j, b in pairs(v.befores) do
             local result, message = pcall(b)
         end
-        
+
         for _j, t in pairs(v.tests) do
 
             for _k, be in pairs(v.before_eaches) do
@@ -101,7 +101,7 @@ function test_lab:run(tags)
             else
                 print('x', t.description, message)
             end
-    
+
             if result then
                 successes = successes + 1
             else
@@ -111,7 +111,7 @@ function test_lab:run(tags)
             for _k, ae in pairs(v.after_eaches) do
                 local result, message = pcall(ae)
             end
-        
+
         end
 
         for _j, a in pairs(v.afters) do
