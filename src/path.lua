@@ -79,10 +79,11 @@ function path.exists(target_path)
     return result
 end
 
+-- need to potentially add filtering
 function path.list_files(root_directory, include_subdirectories)
     assert(type(root_directory) == 'string')
     assert(path.exists(root_directory), 'directory does not exist')
-    
+
     local command = nil
     if os_ext.is_windows then
         command = _wincmd_listfiles(root_directory, include_subdirectories)
@@ -92,6 +93,7 @@ function path.list_files(root_directory, include_subdirectories)
     return os_ext.run_command(command)
 end
 
+-- need to potentially add filtering
 function path.list_dir(root_directory, include_subdirectories)
     assert(type(root_directory), 'string')
     assert(path.exists(root_directory), 'directory does not exist')
