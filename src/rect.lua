@@ -93,29 +93,24 @@ function rect:strictly_contains_point(x, y)
 end
 
 function rect:has_y_collision(other_rect)
-    local bottom_between_y_bounds = other_rect.top <= self.bottom and self.bottom <= other_rect.bottom
-    local top_between_y_bounds = other_rect.top <= self.top and self.top <= other_rect.bottom
-    local has_y_col = top_between_y_bounds or bottom_between_y_bounds
+    local self_bottom_between_y_bounds = other_rect.top <= self.bottom and self.bottom <= other_rect.bottom
+    local self_top_between_y_bounds = other_rect.top <= self.top and self.top <= other_rect.bottom
+    local other_bottom_between_y_bounds = self.top <= other_rect.bottom and other_rect.bottom <= self.bottom
+    local other_top_between_y_bounds = self.top <= other_rect.top and other_rect.top <= self.bottom
+    local has_y_col = self_top_between_y_bounds or self_bottom_between_y_bounds or other_bottom_between_y_bounds or other_top_between_y_bounds
     return has_y_col
 end
 
 function rect:has_x_collision(other_rect)
-    local left_between_x_bounds = other_rect.left <= self.left and self.left <= other_rect.right
-    local right_between_x_bounds = other_rect.left <= self.right and self.right <= other_rect.right
-    local has_x_col = left_between_x_bounds or right_between_x_bounds
+    local self_left_between_x_bounds = other_rect.left <= self.left and self.left <= other_rect.right
+    local self_right_between_x_bounds = other_rect.left <= self.right and self.right <= other_rect.right
+    local other_left_between_x_bounds = self.left <= other_rect.left and other_rect.left <= self.right
+    local other_right_between_x_bounds = self.left <= other_rect.right and other_rect.right <= self.right
+    local has_x_col = self_left_between_x_bounds or self_right_between_x_bounds or other_left_between_x_bounds or other_right_between_x_bounds
     return has_x_col
 end
 
 function rect:collide(other_rect)
-    --[[
-    local bottom_between_y_bounds = other_rect.top <= self.bottom and self.bottom <= other_rect.bottom
-    local top_between_y_bounds = other_rect.top <= self.top and self.top <= other_rect.bottom
-    local left_between_x_bounds = other_rect.left <= self.left and self.left <= other_rect.right
-    local right_between_x_bounds = other_rect.left <= self.right and self.right <= other_rect.right
-    local has_x_col = left_between_x_bounds or right_between_x_bounds
-    local has_y_col = top_between_y_bounds or bottom_between_y_bounds 
-    return has_x_col and has_y_col
-    --]]
     return self.has_x_collision(other_rect) and self.has_y_collision(other_rect)
 end
 
