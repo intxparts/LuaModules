@@ -1,3 +1,25 @@
+--[[
+-- rect represents a rectangle defined by:
+--      - top-left point (x, y)
+--      - width (w)
+--      - height (h)
+--
+--                 w
+--      (x, y) --------- <- top
+--             |       |
+--             |       | h
+--             |       |
+--             --------- <- bottom
+--
+--             ^       ^
+--             |       |
+--            left    right
+--
+-- Note: rect follows the paradigm:
+--          y + h = bottom
+--          x + w = right
+--]]
+
 local rect = {}
 rect.__index = rect
 
@@ -111,7 +133,7 @@ function rect:has_x_collision(other_rect)
 end
 
 function rect:collide(other_rect)
-    return self.has_x_collision(other_rect) and self.has_y_collision(other_rect)
+    return self:has_x_collision(other_rect) and self:has_y_collision(other_rect)
 end
 
 return rect

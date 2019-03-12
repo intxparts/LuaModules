@@ -145,4 +145,69 @@ test_lab:group('rect:has_x_collision ->', function()
     end)
 end)
 
+test_lab:group('rect:collide ->', function()
+    local box1 = rect.new(10, 10, 10, 10)
+    local collision_test = function(description, other_rect, expected)
+        return {desc=description, other_rect=other_rect, expected=expected}
+    end
+    local run = function(tests)
+        for _, test in pairs(tests) do
+            test_lab:test(test.desc, function()
+                assert(box1:collide(test.other_rect) == test.expected)
+            end)
+        end
+    end
+    local has_collision = true
+    local no_collision = false
+    local collision_tests = {
+        collision_test('top-left corner point collision', rect.new(0, 0, 10, 10), has_collision),
+        collision_test('top-left corner point + top edge collision', rect.new(0, 0, 20, 10), has_collision),
+        collision_test('top edge only collision', rect.new(12, 0, 5, 10), has_collision),
+        collision_test('top edge contained by other_rect', rect.new(8, 0, 20, 15), has_collision),
+        collision_test('top edge overlap', rect.new(12, 5, 5, 10), has_collision),
+        collision_test('top-right corner point collision', rect.new(20, 0, 10, 10), has_collision),
+        collision_test('top-right corner point + top edge collision', rect.new(15, 0, 20, 10), has_collision),
+        collision_test('right edge + top-right corner point', rect.new(10, 5, 10, 10), has_collision),
+        collision_test('right edge only collision', rect.new(10, 12, 5, 5), has_collision),
+        collision_test('right edge contained by other_rect', rect.new(10, 5, 30, 30), has_collision),
+        collision_test('right edge overlap', rect.new(5, 12, 10, 5), has_collision),
+        collision_test('bottom-right corner point + right edge collision', rect.new(10, 15, 10, 10), has_collision),
+        collision_test('bottom-right corner point collision', rect.new(20, 20, 10, 10), has_collision),
+        collision_test('bottom-right corner point contained in other_rect', rect.new(15, 15, 10, 10), has_collision),
+        collision_test('bottom-right corner point + bottom edge collision', rect.new(15, 20, 10, 10), has_collision),
+        collision_test('bottom edge only collision', rect.new(12, 20, 5, 5), has_collision),
+        collision_test('bottom edge overlap', rect.new(12, 18, 5, 5), has_collision),
+        collision_test('bottom edge contained in other_rect', rect.new(5, 15, 20, 20), has_collision),
+        collision_test('bottom-left corner point + bottom edge collision', rect.new(5, 20, 10, 10), has_collision),
+        collision_test('bottom-left corner point contained in other_rect', rect.new(5, 15, 10, 10), has_collision),
+        collision_test('bottom-left corner point collision', rect.new(5, 10, 5, 5), has_collision),
+        collision_test('bottom-left corner point + left edge collision', rect.new(5, 15, 5, 10), has_collision),
+        collision_test('left edge collision only', rect.new(5, 12, 5, 5), has_collision),
+        collision_test('left edge overlap', rect.new(5, 12, 10, 5), has_collision),
+        collision_test('left edge contained in other_rect', rect.new(5, 5, 20, 20), has_collision),
+        collision_test('rect contained in other_rect', rect.new(0, 0, 30, 30), has_collision),
+        collision_test('rect contains other_rect', rect.new(12, 12, 5, 5), has_collision),
+        collision_test('outside left-top overlap', rect.new(2, 2, 5, 10), no_collision),
+        collision_test('outside top-left overlap', rect.new(2, 2, 10, 5), no_collision),
+        collision_test('outside top - width contains rect', rect.new(2, 2, 20, 5), no_collision),
+        collision_test('outside top - width contained in rect', rect.new(12, 2, 5, 5), no_collision),
+        collision_test('outside top-right overlap', rect.new(15, 2, 10, 5), no_collision),
+        collision_test('outside top-right corner', rect.new(21, 0, 10, 9), no_collision),
+        collision_test('outside right-top overlap', rect.new(21, 5, 10, 10), no_collision),
+        collision_test('outside right - height contains rect', rect.new(21, 5, 20, 20), no_collision),
+        collision_test('outside right - height contained in rect', rect.new(21, 12, 5, 5), no_collision),
+        collision_test('outside right-bottom overlap', rect.new(21, 15, 10, 10), no_collision),
+        collision_test('outside bottom-right corner', rect.new(21, 21, 10, 10), no_collision),
+        collision_test('outside bottom-right overlap', rect.new(15, 21, 10, 10), no_collision),
+        collision_test('outside bottom - width contains rect', rect.new(8, 21, 20, 10), no_collision),
+        collision_test('outside bottom - width contained in rect', rect.new(12, 21, 5, 5), no_collision),
+        collision_test('outside bottom-left overlap', rect.new(5, 21, 10, 10), no_collision),
+        collision_test('outside bottom-left corner', rect.new(0, 21, 9, 10), no_collision),
+        collision_test('outside left-bottom overlap', rect.new(2, 15, 5, 10), no_collision),
+        collision_test('outside left - height contains rect', rect.new(0, 0, 5, 30), no_collision),
+        collision_test('outside left - height contained in rect', rect.new(0, 12, 5, 5), no_collision),
+        collision_test('outside top-left corner', rect.new(0, 0, 9, 9), no_collision)
+    }
 
+    run(collision_tests)
+end)
