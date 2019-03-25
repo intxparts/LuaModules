@@ -1,5 +1,6 @@
 local path = require('path')
 local test_lab = require('test_lab')
+local benchmark = require('benchmark')
 local args = require('args')
 
 local function run_files(files)
@@ -22,7 +23,7 @@ args:add_argument('files', 'string', {'-f', '--files'}, '+', false, 'Run specifi
 args:add_argument('directories', 'string', {'-d', '--directories'}, '+', false, 'Run all unit test files in a set of directories.')
 args:add_argument('tags', 'string', {'-t', '--tags'}, '+', false, 'Run only the tests with the provided tags.')
 args:add_argument('help', 'boolean', {'-h', '/?', '--help'}, 0, false, 'Display all available commands.')
--- verbosity level?
+args:add_argument('verbose', 'boolean', {'-v', '--verbose'}, 0, false, 'Show all test output')
 
 local result, data = pcall(args.parse, args, arg)
 if not result then
@@ -55,4 +56,32 @@ if data['tags'] then
     tags = data['tags']
 end
 
-test_lab:run(tags)
+local test_report = nil
+local function test_runner()
+    test_report = test_lab:run(tags)
+end
+
+print('running unit tests...')
+local benchmark_time_s = benchmark.etime(test_runner)
+
+for _i, group_report in pairs(test_report.group_reports) do
+    if data['verbose'] then
+        print(group_report.description)
+    end
+    for _j, test_report in pairs(group_report.details) do
+        if test_report.result then
+            if data['verbose'] then
+                print('.', test_report.description)
+            end
+        else
+            print('x', test_report.description, test_report.errors)
+        end
+    end
+end
+
+print('\n~- Test Summary -~')
+print(test_report.summary.total, ' tests run total')
+print(test_report.summary.passed, ' tests passed')
+print(test_report.summary.failed, ' tests failed')
+print(string.format('%.6f seconds to execute', benchmark_time_s))
+

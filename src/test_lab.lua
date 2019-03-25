@@ -1,6 +1,37 @@
 local tbl = require('tbl')
 local test_lab = {}
 
+local function test_report(description, result, errors)
+    return {
+        description = description,
+        result = result,
+        errors = errors
+    }
+end
+
+local function test_summary_report()
+    return {
+        total = 0,
+        passed = 0,
+        failed = 0
+    }
+end
+
+local function group_test_report(description)
+    return {
+        description = description,
+        summary = test_summary_report(),
+        details = {}
+    }
+end
+
+local function full_test_report()
+    return {
+        summary = test_summary_report(),
+        group_reports = {}
+    }
+end
+
 test_lab._current = {
     groups = {},
     tests = {} -- support for tests outside of groups
@@ -8,7 +39,6 @@ test_lab._current = {
 
 -- [] need to clean up what is print out to console & make it more readable
 -- [] currently adding print statements to unit tests that are failing do not work - only on ones that succeed - need to fix this
-
 
 function test_lab:group(description, fn, tags)
     assert(type(fn) == 'function')
@@ -61,21 +91,26 @@ function test_lab:after_each(fn)
 end
 
 function test_lab:run(tags)
-    local t_start = os.time()
-    local successes = 0
-    local failures = 0
-    print('running unit tests')
+    local report = full_test_report()
+    local sa_group = group_test_report('standalone tests ->')
+
     for _i, t in pairs(self._current.tests) do
-        print(t.description)
-        local result, message = pcall(t.fn)
-        print('test_result: ', result)
+        local result, errors = pcall(t.fn)
+
+        report.summary.total = report.summary.total + 1
+        sa_group.summary.total = sa_group.summary.total + 1
+
+        table.insert(sa_group.details, test_report(t.description, result, errors))
 
         if result then
-            successes = successes + 1
+            report.summary.passed = report.summary.passed + 1
+            sa_group.summary.passed = sa_group.summary.passed + 1
         else
-            failures = failures + 1
+            report.summary.failed = report.summary.failed + 1
+            sa_group.summary.failed = sa_group.summary.failed + 1
         end
     end
+    table.insert(report.group_reports, sa_group)
 
     local groups = self._current.groups
     if tags then
@@ -84,48 +119,44 @@ function test_lab:run(tags)
         groups = tbl.filter(self._current.groups, group_tags_contain_all_input_tags)
     end
     for _i, v in pairs(groups) do
-        print(v.description)
+
+        local group_report = group_test_report(v.description)
+
         for _j, b in pairs(v.befores) do
             local result, message = pcall(b)
         end
 
         for _j, t in pairs(v.tests) do
-
             for _k, be in pairs(v.before_eaches) do
                 local result, message = pcall(be)
             end
 
-            local result, message = pcall(t.fn)
-            if result then
-                print('.', t.description)
-            else
-                print('x', t.description, message)
-            end
+            report.summary.total = report.summary.total + 1
+            group_report.summary.total = group_report.summary.total + 1
+
+            local result, errors = pcall(t.fn)
+
+            table.insert(group_report.details, test_report(t.description, result, errors))
 
             if result then
-                successes = successes + 1
+                report.summary.passed = report.summary.passed + 1
+                group_report.summary.passed = group_report.summary.passed + 1
             else
-                failures = failures + 1
+                report.summary.failed = report.summary.failed + 1
+                group_report.summary.failed = group_report.summary.failed + 1
             end
 
             for _k, ae in pairs(v.after_eaches) do
                 local result, message = pcall(ae)
             end
-
         end
 
+        table.insert(report.group_reports, group_report)
         for _j, a in pairs(v.afters) do
             local result, message = pcall(a)
         end
     end
-    local t_end = os.time()
-    local total_tests = successes + failures
-    print('\n')
-    print('~- Test Summary -~')
-    print(total_tests, " tests run total")
-    print(successes, " tests passed")
-    print(failures, " tests failed")
-    print(os.difftime(t_end, t_start), "seconds to execute")
+    return report
 end
 
 return test_lab
