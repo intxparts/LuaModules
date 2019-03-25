@@ -2,8 +2,8 @@ package.path = package.path .. '; ..\\?.lua; ..\\src\\?.lua'
 local test_lab = require('test_lab')
 
 test_lab:group('success tests ->', function()
-    test_lab:before_each(function() print('>>before each') end)
-    test_lab:after(function() print('>>after') end)
+    test_lab:before_each(function() local i = 0 end)
+    test_lab:after(function() local j = 0 end)
 
     test_lab:test('test 1', function()
         assert(1 == 1)
@@ -15,8 +15,8 @@ test_lab:group('success tests ->', function()
 end)
 
 test_lab:group('failure tests ->', function()
-    test_lab:before(function() print('>>before') end)
-    test_lab:after_each(function() print('>>after each') end)
+    test_lab:before(function() local i = 0 end)
+    test_lab:after_each(function() local j = 0 end)
     
     test_lab:test('test 3', function()
         assert(1 == 2, 'expected failure') 
