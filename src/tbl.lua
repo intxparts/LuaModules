@@ -75,9 +75,20 @@ end
 
 local function tbl_contains_value(t, value)
     assert(type(t) == 'table')
+    
+    for _, v in pairs(t) do
+        if type(t) ~= 'function' and v == value then
+            return true
+        end
+    end
+    return false
+end
+
+local function tbl_contains_fn(t, fn)
+    assert(type(t) == 'table')
 
     for _, v in pairs(t) do
-        if v == value then
+        if type(t) == 'function' and v == value then
             return true
         end
     end
@@ -116,7 +127,8 @@ end
 local function tbl_deep_equal(t1, t2)
     assert(type(t1) == 'table')
     assert(type(t2) == 'table')
-    if tbl_count(t1) ~= tbl_count(t2) then
+    local include_all_tbl_values = function() return true end
+    if tbl_count(t1, include_all_tbl_values) ~= tbl_count(t2, include_all_tbl_values) then
         return false
     end
     for k, t1_k in pairs(t1) do
@@ -143,6 +155,22 @@ local function tbl_deep_equal(t1, t2)
     return true
 end
 
+local function tbl_impl(t1, t2)
+    assert(type(t1) == 'table')
+    assert(type(t2) == 'table')
+    for k, v in pairs(t2) do
+        if type(v) == 'function' then
+            assert(t1[k] == nil, string.format('key %q is not nil', k))
+            t1[k] = v
+        end
+    end
+    return t1
+end
+
+local function tbl_inst(t)
+    return tbl_impl(t, tbl)
+end
+
 tbl.filter = tbl_filter
 tbl.all = tbl_all
 tbl.any = tbl_any
@@ -152,7 +180,9 @@ tbl.reduce = tbl_reduce
 tbl.count = tbl_count
 tbl.contains_key = tbl_contains_key
 tbl.contains_value = tbl_contains_value
+tbl.contains_fn = tbl_contains_fn
 tbl.deep_equal = tbl_deep_equal
-tbl.wrap = tbl_wrap
+tbl.impl = tbl_impl
+tbl.inst = tbl_inst
 
 return tbl

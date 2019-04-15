@@ -2,6 +2,7 @@ local path = require('path')
 local test_lab = require('test_lab')
 local benchmark = require('benchmark')
 local args = require('args')
+local str = require('str')
 
 local function run_files(files)
     for _, f in pairs(files) do
@@ -19,11 +20,25 @@ local function run_files(files)
     end
 end
 
-args:add_argument('files', 'string', {'-f', '--files'}, '+', false, 'Run specific unit test files.')
-args:add_argument('directories', 'string', {'-d', '--directories'}, '+', false, 'Run all unit test files in a set of directories.')
-args:add_argument('tags', 'string', {'-t', '--tags'}, '+', false, 'Run only the tests with the provided tags.')
-args:add_argument('help', 'boolean', {'-h', '/?', '--help'}, 0, false, 'Display all available commands.')
-args:add_argument('verbose', 'boolean', {'-v', '--verbose'}, 0, false, 'Show all test output')
+local function print_help()
+    local str_format = "%-15s | %-3s | %-25s | %-60s"
+    print(string.format(str_format, "Argument", "Req", "Flags", "Description"))
+    print(str.rep('-', 100))
+    for i, v in ipairs(args._arguments) do
+        local required_str = ' '
+        if v.required then
+            required_str = '.'
+        end
+        local flag_str = table.concat(v.flags, ",  ")
+        print(string.format(str_format, v.arg_name, required_str, flag_str, v.help))
+    end
+end
+
+args:add_argument('files',       'string',  {'-f', '--files'},       '+',   false, 'Run specific unit test files.')
+args:add_argument('directories', 'string',  {'-d', '--directories'}, '+',   false, 'Run all unit test files in a set of directories.')
+args:add_argument('tags',        'string',  {'-t', '--tags'},        '+',   false, 'Run only the tests with the provided tags.')
+args:add_argument('help',        'boolean', {'-h', '--help', '/?' },  0,    false, 'Display all available commands.')
+args:add_argument('verbose',     'boolean', {'-v', '--verbose'},      0,    false, 'Show all test output')
 
 local result, data = pcall(args.parse, args, arg)
 if not result then
@@ -32,7 +47,7 @@ if not result then
 end
 
 if data['help'] then
-    args:print_help()
+    print_help()
     return
 end
 

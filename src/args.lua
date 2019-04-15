@@ -3,23 +3,30 @@ local str = require('str')
 
 local args = {}
 args.__index = args
-args._arguments = {}
+args._arguments = tbl.inst({})
 args._i = 1
+
+local valid_arg_types = tbl.inst({'string', 'number', 'boolean'})
+
+-- need to fix handling of multiple '+' arguments
 
 function args:add_argument(arg_name, type_info, flags, nargs, required, help, default)
     assert(type(arg_name) == 'string')
     assert(type(type_info) == 'string')
+    assert(valid_arg_types:contains_value(type_info), 'invalid argument type')
     assert(type(nargs) == 'string' or type(nargs) == 'number')
-    assert(flags ~= nil and type(flags) == 'table', "flags must be a valid table")
-    local argument = {
+    assert(flags ~= nil and type(flags) == 'table', 'flags must be a valid table')
+    assert(type(required) == 'boolean')
+    assert(type(help) == 'string')
+    local argument = tbl.inst({
         arg_name = arg_name,
         type_info = type_info,
-        flags = flags,
+        flags = tbl.inst(flags),
         nargs = nargs,
-        required = required and true or false,
-        help = help, -- or generateHelp(arg_name),
+        required = required,
+        help = help,
         default = default
-    }
+    })
     assert(self._arguments[self._i] == nil)
     self._arguments[self._i] = argument
     self._i = self._i + 1
@@ -27,22 +34,22 @@ end
 
 function args:parse(a)
     assert(type(a) == 'table')
-    local inputs = a or {}
+    local inputs = tbl.inst(a)
     local function argument_type_mismatch_error(input, argument)
       error(
             string.format(
                 'expected value: %d to be of type %q for argument %q',
-                input, 
-                argument.type_info, 
+                input,
+                argument.type_info,
                 argument.arg_name
             )
         )
     end
     local arguments = {}
-    for i, argument in ipairs(self._arguments) do
-        local arg_name_count = tbl.count(inputs, function(_, v) return tbl.any(argument.flags, function(_, flag) return flag == v end) end)
+    for idx, argument in ipairs(self._arguments) do
+        local arg_name_count = inputs:count(function(_, input) return type(input) ~= 'function' and argument.flags:contains_value(input) end)
         assert(arg_name_count < 2, string.format('multiple counts of the same argument not supported: %q', argument.arg_name))
-        
+
         if argument.required then
             assert(arg_name_count > 0, string.format('missing required argument %q', argument.arg_name))
         end
@@ -61,7 +68,7 @@ function args:parse(a)
                 end
             elseif type(argument.nargs) == 'number' then
                 assert(
-                    argument.nargs > -1, 
+                    argument.nargs > -1,
                     string.format('invalid nargs value provided for argument: %q. nargs must be a whole number', argument.arg_name)
                 )
                 min_required_nargs = argument.nargs
@@ -75,13 +82,13 @@ function args:parse(a)
 
             for i, input in ipairs(inputs) do
 
-                if tbl.any(argument.flags, function(_, flag) return flag == input end) then
+                if argument.flags:contains_value(input) then
                     local arg_values = {}
                     local arg_value_idx = 1
-                    while arg_value_idx + i <= #inputs and self._arguments[ inputs[i + arg_value_idx] ] == nil do
+                    while arg_value_idx + i <= inputs:count() and self._arguments[ inputs[i + arg_value_idx] ] == nil do
                         local current_input = inputs[i + arg_value_idx]
-      
-                        if argument.type_info == 'number' then 
+
+                        if argument.type_info == 'number' then
                             local number = tonumber(current_input)
                             if not number then argument_type_mismatch_error(current_input, argument) end
                             arg_values[arg_value_idx] = number
@@ -102,10 +109,10 @@ function args:parse(a)
                         else
                             arg_values[arg_value_idx] = nil
                         end
-                        
+
                         arg_value_idx = arg_value_idx + 1
                     end -- while
-                    
+
                     local arg_value_count = arg_value_idx
                     assert(min_required_nargs <= arg_value_count and arg_value_count <= max_nargs)
                     if arg_value_count > 0 then
@@ -115,7 +122,7 @@ function args:parse(a)
                             error(
                                 string.format(
                                     'default argument %q type does not match the specified type: %q', 
-                                    tostring(argument.default), 
+                                    tostring(argument.default),
                                     argument.type_info
                                 )
                             )
@@ -130,20 +137,6 @@ function args:parse(a)
 
     end -- for loop argument
     return arguments
-end
-
-function args:print_help()
-    local str_format = "%-15s | %-3s | %-25s | %-60s"
-    print(string.format(str_format, "Argument", "Req", "Flags", "Description"))
-    print(str.rep('-', 100))
-    for i, v in ipairs(self._arguments) do
-        local required_str = ' '
-        if v.required then
-            required_str = '.'
-        end
-        local flag_str = table.concat(v.flags, ",  ")
-        print(string.format(str_format, v.arg_name, required_str, flag_str, v.help))
-    end
 end
 
 return args
