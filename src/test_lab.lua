@@ -114,8 +114,11 @@ function test_lab:run(tags)
 
     local groups = self._current.groups
     if tags then
-        local function tag_in_input_tags(_, tag) return tbl.contains_key(tags, tag) end
-        local function group_tags_contain_all_input_tags(_, group) return tbl.all(group.tags, tag_in_input_tags) end
+        local function group_tags_contain_all_input_tags(_, group)
+            return tbl.all(tags, function(_, tag)
+                return tbl.contains_value(group.tags, tag)
+            end)
+        end
         groups = tbl.filter(self._current.groups, group_tags_contain_all_input_tags)
     end
     for _i, v in pairs(groups) do
