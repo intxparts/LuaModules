@@ -155,6 +155,13 @@ local function tbl_deep_equal(t1, t2)
     return true
 end
 
+local function tbl_iter(t, fn)
+    assert(type(t) == 'table')
+    for k, v in pairs(t) do
+        fn(k, v)
+    end
+end
+
 local function tbl_impl(t1, t2)
     assert(type(t1) == 'table')
     assert(type(t2) == 'table')
@@ -184,5 +191,6 @@ tbl.contains_fn = tbl_contains_fn
 tbl.deep_equal = tbl_deep_equal
 tbl.impl = tbl_impl
 tbl.inst = tbl_inst
+tbl.iter = tbl_iter
 
 return tbl
