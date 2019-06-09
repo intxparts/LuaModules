@@ -157,25 +157,20 @@ end
 
 local function tbl_iter(t, fn)
     assert(type(t) == 'table')
+    assert(type(fn) == 'function')
     for k, v in pairs(t) do
         fn(k, v)
     end
 end
 
-local function tbl_impl(t1, t2)
-    assert(type(t1) == 'table')
-    assert(type(t2) == 'table')
-    for k, v in pairs(t2) do
-        if type(v) == 'function' then
-            assert(t1[k] == nil, string.format('key %q is not nil', k))
-            t1[k] = v
+local function tbl_iter_data(t, fn)
+    assert(type(t) == 'table')
+    assert(type(fn) == 'function')
+    for k, v in pairs(t) do
+        if type(v) ~= 'function' then
+            fn(k, v)
         end
     end
-    return t1
-end
-
-local function tbl_inst(t)
-    return tbl_impl(t, tbl)
 end
 
 tbl.filter = tbl_filter
@@ -189,8 +184,7 @@ tbl.contains_key = tbl_contains_key
 tbl.contains_value = tbl_contains_value
 tbl.contains_fn = tbl_contains_fn
 tbl.deep_equal = tbl_deep_equal
-tbl.impl = tbl_impl
-tbl.inst = tbl_inst
 tbl.iter = tbl_iter
+tbl.iter_data = tbl_iter_data
 
 return tbl
