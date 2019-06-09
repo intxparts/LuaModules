@@ -104,7 +104,7 @@ function args:parse(a)
             return i
         end
 
-        assert(min_required_nargs <= num_args and num_args <= max_nargs, string.format('invalid number of arguments provided for command: %q', matching_cmd.arg_name))
+        assert(min_required_nargs <= num_args and num_args <= max_nargs, string.format('invalid number of arguments provided for command: %q', matching_cmd.name))
         if num_args > 0 then
             cmds[matching_cmd.name] = cmd_args
         else
