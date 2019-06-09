@@ -15,7 +15,6 @@ local function run_files(files)
             return
         end
         -- might need to wrap this in pcall
-        print('executing file=', f)
         dofile(f)
         ::continue_files::
     end
