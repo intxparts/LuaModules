@@ -69,11 +69,7 @@ function args:parse(a)
         local cmd_args = {}
         local num_args = 1
         -- process up until the next command is identified
-        while num_args < max_nargs and i < tbl.count(inputs) do
-            -- return the previous idx so that the next cmd_flag can be properly processed
-            if cmd_flags[inputs[i]] then
-                break
-            end
+        while num_args < max_nargs and i < tbl.count(inputs) and cmd_flags[inputs[i]] == nil do
 
             if matching_cmd.type_info == 'number' then
                 local number = tonumber(inputs[i])
@@ -99,6 +95,7 @@ function args:parse(a)
             num_args = num_args + 1
             i = i + 1
         end
+
         if max_nargs == 0 then
             cmds[matching_cmd.name] = true
             return i
@@ -120,6 +117,7 @@ function args:parse(a)
             cmds[matching_cmd.name] = { matching_cmd.default }
         end
 
+        -- return the previous idx so that the next cmd_flag can be properly processed
         return i - 1
     end
 
