@@ -15,6 +15,7 @@ local function run_files(files)
             return
         end
         -- might need to wrap this in pcall
+        print('executing file=', f)
         dofile(f)
         ::continue_files::
     end
@@ -24,7 +25,7 @@ local function print_help()
     local str_format = "%-15s | %-3s | %-25s | %-60s"
     print(string.format(str_format, "Argument", "Req", "Flags", "Description"))
     print(str.rep('-', 100))
-    for i, v in ipairs(args._arguments) do
+    for i, v in ipairs(args._cmds) do
         local required_str = ' '
         if v.required then
             required_str = '.'
@@ -34,11 +35,11 @@ local function print_help()
     end
 end
 
-args:add_argument('files',       'string',  {'-f', '--files'},       '+',   false, 'Run specific unit test files.')
-args:add_argument('directories', 'string',  {'-d', '--directories'}, '+',   false, 'Run all unit test files in a set of directories.')
-args:add_argument('tags',        'string',  {'-t', '--tags'},        '+',   false, 'Run only the tests with the provided tags.')
-args:add_argument('help',        'boolean', {'-h', '--help', '/?' },  0,    false, 'Display all available commands.')
-args:add_argument('verbose',     'boolean', {'-v', '--verbose'},      0,    false, 'Show all test output')
+args:add_command('files',       'string',  {'-f', '--files'},       '+',   false, 'Run specific unit test files.')
+args:add_command('directories', 'string',  {'-d', '--directories'}, '+',   false, 'Run all unit test files in a set of directories.')
+args:add_command('tags',        'string',  {'-t', '--tags'},        '+',   false, 'Run only the tests with the provided tags.')
+args:add_command('help',        'boolean', {'-h', '--help', '/?' },  0,    false, 'Display all available commands.')
+args:add_command('verbose',     'boolean', {'-v', '--verbose'},      0,    false, 'Show all test output')
 
 local result, data = pcall(args.parse, args, arg)
 if not result then

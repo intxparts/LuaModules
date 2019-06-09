@@ -75,7 +75,7 @@ end
 
 local function tbl_contains_value(t, value)
     assert(type(t) == 'table')
-    
+
     for _, v in pairs(t) do
         if type(t) ~= 'function' and v == value then
             return true
