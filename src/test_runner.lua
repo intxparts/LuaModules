@@ -25,9 +25,9 @@ local function print_help()
     print(string.format(str_format, "Argument", "Req", "Flags", "Description"))
     print(str.rep('-', 100))
     for i, v in ipairs(args._cmds) do
-        local required_str = 'N'
+        local required_str = ' '
         if v.required then
-            required_str = 'Y'
+            required_str = '.'
         end
         local flag_str = table.concat(v.flags, ",  ")
         print(string.format(str_format, v.name, required_str, flag_str, v.help))
