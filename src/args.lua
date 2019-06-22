@@ -41,6 +41,20 @@ local function cmd_type_mismatch_error(input, cmd)
     )
 end
 
+local function get_arg_converter_fn(type_info_str)
+    if type_info_str == 'number' then
+        return tonumber
+    elseif type_info_str == 'integer' then
+        return str.to_int
+    elseif type_info_str == 'string' then
+        return function(x) return x end
+    elseif type_info_str == 'boolean' then
+        return str.to_bool
+    else
+        return function(x) return nil end
+    end
+end
+
 local function collect_cmd_args(cmd_flags, i, inputs, matching_cmd, cmds)
     local min_required_nargs = 0
     local max_nargs = 256
@@ -61,32 +75,14 @@ local function collect_cmd_args(cmd_flags, i, inputs, matching_cmd, cmds)
         min_required_nargs = matching_cmd.nargs
         max_nargs = matching_cmd.nargs
     end
+    local converter_fn = get_arg_converter_fn(matching_cmd.type_info)
     local cmd_args = {}
     local num_args = 1
     -- process up until the next command is identified
-    while num_args < max_nargs and i < tbl.count(inputs) and cmd_flags[inputs[i]] == nil do
-
-        if matching_cmd.type_info == 'number' then
-            local number = tonumber(inputs[i])
-            if not number then cmd_type_mismatch_error(inputs[i], matching_cmd) end
-            cmd_args[num_args] = number
-
-        elseif matching_cmd.type_info == 'integer' then
-            local integer = str.to_int(inputs[i])
-            if not integer then cmd_type_mismatch_error(inputs[i], matching_cmd) end
-            cmd_args[num_args] = integer
-
-        elseif matching_cmd.type_info == 'string' then
-            cmd_args[num_args] = inputs[i]
-
-        elseif matching_cmd.type_info == 'boolean' then
-            local bool = str.to_bool(inputs[i])
-            if not bool then cmd_type_mismatch_error(inputs[i], matching_cmd) end
-            cmd_args[num_args] = bool
-
-        else
-            cmd_args[num_args] = nil
-        end
+    while num_args < max_nargs and i < tbl.count(inputs) and cmd_flags[inputs[i]] == nil and inputs[i] ~= nil do
+        local value = converter_fn(inputs[i])
+        if not value then cmd_type_mismatch_error(inputs[i], matching_cmd) end
+        cmd_args[num_args] = value
         num_args = num_args + 1
         i = i + 1
     end
