@@ -37,9 +37,6 @@ test_lab._current = {
     tests = {} -- support for tests outside of groups
 }
 
--- [] need to clean up what is print out to console & make it more readable
--- [] currently adding print statements to unit tests that are failing do not work - only on ones that succeed - need to fix this
-
 function test_lab:group(description, fn, tags)
     assert(type(fn) == 'function')
     local child = {
