@@ -12,7 +12,7 @@ test_lab:group('success tests ->', function()
     test_lab:test('test 2', function()
         assert(1 ~= 2)
     end)
-end, {'efail'})
+end)
 
 test_lab:group('failure tests ->', function()
     test_lab:before(function() local i = 0 end)
