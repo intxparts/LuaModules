@@ -40,7 +40,7 @@ args:add_command('tags',        'string',  {'-t', '--tags'},        '+',   false
 args:add_command('help',        'boolean', {'-h', '--help', '/?' },  0,    false, 'Display all available commands.')
 args:add_command('verbose',     'boolean', {'-v', '--verbose'},      0,    false, 'Show all test output')
 
-local result, data = pcall(args.parse, args, arg)
+local result, data = pcall(function() return args:parse(arg) end)
 if not result then
     print(data)
     return
