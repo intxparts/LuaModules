@@ -1,6 +1,6 @@
 local path = require('path')
 local test_lab = require('test_lab')
-local benchmark = require('benchmark')
+local timer = require('timer')
 local args = require('args')
 local str = require('str')
 
@@ -77,7 +77,7 @@ local function test_runner()
 end
 
 print('running unit tests...')
-local benchmark_time_s = benchmark.etime(test_runner)
+local time_start = timer.ctime(test_runner)
 
 for _i, group_report in pairs(test_report.group_reports) do
     if data['verbose'] then
@@ -98,5 +98,5 @@ print('\n~- Test Summary -~')
 print(test_report.summary.total, ' tests run total')
 print(test_report.summary.passed, ' tests passed')
 print(test_report.summary.failed, ' tests failed')
-print(string.format('%.6f seconds to execute', benchmark_time_s))
+print(string.format('%.6f seconds to execute', time_start))
 
