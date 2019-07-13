@@ -74,24 +74,45 @@ test_lab:group('tbl.apply(t [table], fn [function]) -> [table]', function()
         assert(not success)
     end)
 
-    test_lab:test('arg[1] must be defined', function()
-        local success, err = pcall(function() tbl.apply({}) end)
+    test_lab:test('arg[1] must be defined for non-empty tables', function()
+        local success, err = pcall(function() tbl.apply({1}) end)
         assert(not success)
     end)
 
-    test_lab:test('arg[1] must be a function', function()
-        local success, err = pcall(function() tbl.apply({}, 0) end)
+    test_lab:test('arg[1] must be callable', function()
+        local success, err = pcall(function() tbl.apply({1}, 0) end)
         assert(not success)
     end)
+
+	test_lab:test('arg[1] as callable object', function()
+		local modifier = {}
+		local mt = {}
+		mt.__index = mt
+		mt.__call = function(fn, ...)
+			for _, v in pairs({...}) do
+				return v + 1
+			end
+		end
+		setmetatable(modifier, mt)
+		local result = tbl.apply({1, 2}, modifier)
+		assert(result[1] == 2 and result[2] == 3)
+	end)
+
+	test_lab:test('original table is modified and returned', function()
+		local orig = {1,2}
+		local result = tbl.apply(orig, function(v) return v+1 end)
+        assert(orig == result)
+		assert(result[1] == 2 and result[2] == 3)
+	end)
 
     test_lab:test('empty table', function()
         local success, err = pcall(function() tbl.apply({}, function(v) return v end) end)
         assert(success)
     end)
 
-    test_lab:test('apply value function to array table', function()
-        local actual_table = tbl.apply({ 1, 2, 3, 4, 5 }, function(v) return v + 1 end)
-        assert(tbl.deep_equal(actual_table, { 2, 3, 4, 5, 6 }))
+    test_lab:test('empty table with missing arg[1] does nothing', function()
+        local success, err = pcall(function() tbl.apply({}) end)
+        assert(success)
     end)
 
 end)
