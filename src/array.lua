@@ -1,8 +1,8 @@
 local array = {}
 array.__index = array
 
-function array.__len(o)
-	return o._len
+function array:length()
+	return self._len
 end
 
 function array.new()
@@ -11,13 +11,13 @@ function array.new()
 	return a
 end
 
-function array:append(e)
+function array:insert(e)
 	self._len = self._len + 1
 	self[self._len] = e
 end
 
 function array:insert_at(e, i)
-	assert(1 <= i and i <= self._len)
+	assert(1 <= i and i <= self._len, 'index out of range')
 	for j = self._len, i, -1 do
 		self[j+1] = self[j]
 	end
@@ -109,6 +109,8 @@ function array:remove(e)
 		self._len = self._len - 1
 	end
 end
+
+-- remove_range
 
 function array:clear()
 	for j = 1, self._len do
