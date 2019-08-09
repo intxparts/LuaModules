@@ -25,15 +25,15 @@ function array:insert_at(e, i)
 	self._len = self._len + 1
 end
 
-function array:insert_range(idx, arr)
-	assert(1 <= idx and idx <= self._len)
-	local count = #arr
+function array:insert_range_at(arr, idx)
+	assert(getmetatable(arr) == array)
+	assert(1 <= idx and idx <= self._len, 'index out of range')
 	for j = idx, self._len do
-		local new_idx = idx + count
+		local new_idx = idx + arr._len
 		self[new_idx] = self[j]
 	end
 
-	for j = 1, count do
+	for j = 1, arr._len do
 		local new_idx = idx + j - 1
 		self[new_idx] = arr[j]
 	end

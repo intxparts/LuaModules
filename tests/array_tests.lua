@@ -73,7 +73,7 @@ tl:group('array:insert_at(e [any], i [int]) ->', function()
 
 	tl:test('no args raises error', function()
 		local a = array.new()
-        local success, err = pcall(function() a:insert_at() end)
+		local success, err = pcall(function() a:insert_at() end)
 		assert(not success)
 	end)
 
@@ -129,4 +129,14 @@ tl:group('array:length() ->', function()
 
 end)
 
-
+tl:group('array:clear() ->', function()
+	tl:test('removes all elements and sets inst._len = 0', function()
+		local a = array.new()
+		a:insert(1)
+		a:insert(2)
+		a:insert(3)
+		assert(a._len == 3)
+		a:clear()
+		assert(a[1] == nil and a[2] == nil and a[3] == nil and a._len == 0)
+	end)
+end)
