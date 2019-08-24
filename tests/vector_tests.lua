@@ -209,9 +209,10 @@ test_lab:group('vector.__sub ->', function()
 end)
 
 test_lab:group('vector.__mul ->', function()
+
     test_lab:test('0 * v = zero()', function()
         local v1 = vector.new(1, 1, 1)
-        local actual = 0 * v1
+        local actual = v1 * 0
         assert(vector.zero() == actual)
     end)
 
@@ -225,16 +226,15 @@ test_lab:group('vector.__mul ->', function()
         assert(v1 ~= actual)
     end)
 
-    -- vector currently only supports left hand scalar multiplication 
-    test_lab:test('v * 1 = error()', function()
-        local v1 = vector.new(1, 0, 1)
-        local result, message = pcall(function() local v2 = v1 * 1 end)
-        assert(result == false)
-    end)
-
     test_lab:test('-1.5 * v', function()
         local v1 = vector.new(1, 0, -1)
         local actual =  -1.5 * v1
+        assert(vector.new(-1.5, 0, 1.5) == actual)
+    end)
+
+	test_lab:test('v * -1.5', function()
+        local v1 = vector.new(1, 0, -1)
+        local actual =  v1 * -1.5
         assert(vector.new(-1.5, 0, 1.5) == actual)
     end)
 end)

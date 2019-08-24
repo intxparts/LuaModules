@@ -58,7 +58,18 @@ local function vector_sub(v1, v2)
     )
 end
 
-local function vector_mul(k, v)
+local function vector_mul(l, r)
+	local v = nil
+	local k = nil
+	
+	if type(l) == 'number' then
+		k = l
+		v = r
+	else
+		k = r
+		v = l
+	end
+
     return vector_new(
         v.x*k,
         v.y*k,
@@ -103,6 +114,13 @@ vector.mag = vector_mag
 vector.mag2 = vector_mag2
 vector.from_points = vector_from_points
 vector.zero = vector_zero
+
+vector.add = vector_add
+vector.sub = vector_sub
+vector.mult_scalar = vector_mult
+vector.div_scalar = vector_div
+vector.equal = vector_equal
+vector.tostring = vector_tostring
 
 --
 -- Instance dependent functions
