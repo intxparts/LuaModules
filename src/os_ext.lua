@@ -19,12 +19,12 @@ os_ext.is_unix = os_ext.platform == os_ext.platforms.unix
 -- Returns a table of results from a command string being invoked
 function os_ext.run_command(command)
     assert(type(command) == 'string')
-    local idx = 0
+    local idx = 1
     local results = {}
     local pfile = io.popen(command)
     for line in pfile:lines() do
-        idx = idx + 1
         results[idx] = line
+        idx = idx + 1
     end
     pfile:close()
     return results
