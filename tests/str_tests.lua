@@ -3,7 +3,11 @@ package.path = package.path .. '; ..\\?.lua; ..\\src\\?.lua'
 local test_lab = require('test_lab')
 local str = require('str')
 
-test_lab:group('str.rep ->', function()
+test_lab:group('str.rep(s [string], n [int], sep [string]) -> [string]', function()
+
+	test_lab:test('replicates the given [string] s, n times, separated by str', function()
+		assert('hello,hello' == str.rep('hello', 2, ','))
+	end)
 
     test_lab:test('nil args', function()
         local result, message = pcall(function() local s = str.rep() end)
@@ -55,7 +59,7 @@ test_lab:group('str.rep ->', function()
 
 end)
 
-test_lab:group('str.join ->', function()
+test_lab:group('str.join(t [table], sep [string]) -> [string]', function()
 
     test_lab:test('nil table', function()
         local result, message = pcall(function() local s = str.join(nil) end)
@@ -114,63 +118,69 @@ test_lab:group('str.join ->', function()
 
 end)
 
-test_lab:group('str.to_bool ->', function()
+test_lab:group('str.to_bool(s [string]) -> [nil, boolean]', function()
 
-    local non_str_types = { true, 0, {}}
-    for _, v in pairs(non_str_types) do
-        test_lab:test(string.format('str.to_bool(%s)', type(v)), function()
-            assert(nil == str.to_bool(v))
-        end)
-    end
-    test_lab:test('str.to_bool(nil)', function()
+	test_lab:test('converts a [string] s to its boolean equivalent: str.to_bool("true") == true', function()
+		assert(true == str.to_bool('true'))
+	end)
+
+	test_lab:test('str.to_bool(true) == nil', function()
+		assert(nil == str.to_bool(v))
+	end)
+
+	test_lab:test('str.to_bool(0) == nil', function()
+		assert(nil == str.to_bool(v))
+	end)
+
+	test_lab:test('str.to_bool({}) == nil', function()
+		assert(nil == str.to_bool(v))
+	end)
+
+    test_lab:test('str.to_bool(nil) == nil', function()
         assert(nil == str.to_bool(nil))
     end)
 
     local invalid_strs = {'', ' ', 'True', 'False', 'random', '10', '.true'}
     for _, v in pairs(invalid_strs) do
-        test_lab:test(string.format('str.to_bool("%s")', v), function()
+        test_lab:test(string.format('str.to_bool("%s") == nil', v), function()
             assert(nil == str.to_bool(v))
         end)
     end
 
-    test_lab:test('str.to_bool(true)', function()
-        assert(true == str.to_bool('true'))
-    end)
-
-    test_lab:test('str.to_bool(false)', function()
+    test_lab:test('str.to_bool("false") == false', function()
         assert(false == str.to_bool('false'))
     end)
 end)
 
-test_lab:group('str.to_int ->', function()
-    local non_number_str_types = {true, {}}
+test_lab:group('str.to_int(s [string]) -> [nil, int]', function()
+	test_lab:test('str.to_int(true) == nil', function()
+		assert(nil == str.to_int(v))
+	end)
 
-    for _, v in pairs(non_number_str_types) do
-        test_lab:test(string.format('str.to_int(%s)', type(v)), function()
-            assert(nil == str.to_int(v))
-        end)
-    end
+	test_lab:test('str.to_int({}) == nil', function()
+		assert(nil == str.to_int(v))
+	end)
 
     local invalid_strs = {'hello', '', ' ', '10%', '-.'}
     for _, v in pairs(invalid_strs) do
-        test_lab:test(string.format('str.to_int(%s)', v), function()
+        test_lab:test(string.format('str.to_int("%s") == nil', v), function()
             assert(nil == str.to_int(v))
         end)
     end
 
-    test_lab:test('str.to_int(-5.67)', function()
+    test_lab:test('str.to_int(-5.67) == -6', function()
         assert(-6 == str.to_int(-5.67))
     end)
 
-    test_lab:test('str.to_int(1.79)', function()
+    test_lab:test('str.to_int(1.79) == 1', function()
         assert(1 == str.to_int(1.79))
     end)
 
-    test_lab:test('str.to_int("-5.67")', function()
+    test_lab:test('str.to_int("-5.67") == -6', function()
         assert(-6 == str.to_int("-5.67"))
     end)
 
-    test_lab:test('str.to_int("1.79")', function()
+    test_lab:test('str.to_int("1.79") == 1', function()
         assert(1 == str.to_int("1.79"))
     end)
 
