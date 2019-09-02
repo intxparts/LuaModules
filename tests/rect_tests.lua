@@ -3,7 +3,7 @@ package.path = package.path .. '; ..\\?.lua; ..\\src\\?.lua'
 local test_lab = require('test_lab')
 local rect = require('rect')
 
-test_lab:group('rect.new ->', function()
+test_lab:group('rect.new(x [int], y [int], w [int], h [int]) -> [rect]', function()
 
     test_lab:test('rect origin is top-left', function()
         local box = rect.new(0, 0, 10, 20)
@@ -27,7 +27,7 @@ test_lab:group('rect.new ->', function()
 
 end)
 
-test_lab:group('rect:set ->', function()
+test_lab:group('rect:set(x [int], y [int], w [int], h [int]) ->', function()
 
     test_lab:test('properties updated', function()
         local r = rect.new(0, 0, 10, 10)
@@ -54,7 +54,7 @@ test_lab:group('rect:set ->', function()
 
 end)
 
-test_lab:group('rect:set_height ->', function()
+test_lab:group('rect:set_height(h [int]) ->', function()
     test_lab:test('negative height not permitted', function()
         local r = rect.new(0, 0, 10, 10)
         local result, message = pcall(function() r:set_height(-10) end)
@@ -71,7 +71,7 @@ test_lab:group('rect:set_height ->', function()
     end)
 end)
 
-test_lab:group('rect:set_width ->', function()
+test_lab:group('rect:set_width(w [int]) ->', function()
     test_lab:test('negative width not permitted', function()
         local r = rect.new(10, 10, 10, 10)
         local result, message = pcall(function() r:set_width(-10) end)
@@ -88,7 +88,7 @@ test_lab:group('rect:set_width ->', function()
     end)
 end)
 
-test_lab:group('rect:set_x ->', function()
+test_lab:group('rect:set_x(x [int]) ->', function()
     test_lab:test('x, left, right updated', function()
         local r = rect.new(10, 10, 10, 10)
         r:set_x(20)
@@ -103,7 +103,7 @@ test_lab:group('rect:set_x ->', function()
     end)
 end)
 
-test_lab:group('rect:set_y ->', function()
+test_lab:group('rect:set_y(y [int]) ->', function()
     test_lab:test('y, top, bottom updated', function()
         local r = rect.new(10, 10, 10, 10)
         r:set_y(20)
@@ -118,7 +118,7 @@ test_lab:group('rect:set_y ->', function()
     end)
 end)
 
-test_lab:group('rect:set_top ->', function()
+test_lab:group('rect:set_top(t [int]) ->', function()
     test_lab:test('y, top, bottom updated', function()
         local r = rect.new(10, 10, 10, 10)
         r:set_top(20)
@@ -133,7 +133,7 @@ test_lab:group('rect:set_top ->', function()
     end)
 end)
 
-test_lab:group('rect:set_bottom ->', function()
+test_lab:group('rect:set_bottom(b [int]) ->', function()
     test_lab:test('y, top, bottom updated', function()
         local r = rect.new(10, 10, 10, 10)
         r:set_bottom(30)
@@ -148,7 +148,7 @@ test_lab:group('rect:set_bottom ->', function()
     end)
 end)
 
-test_lab:group('rect:copy ->', function()
+test_lab:group('rect:copy() -> [rect]', function()
     test_lab:test('same data, different object', function()
         local box1 = rect.new(0, 0, 10, 20)
         local box2 = box1:copy()
@@ -161,7 +161,7 @@ test_lab:group('rect:copy ->', function()
     end)
 end)
 
-test_lab:group('rect:contains_point ->', function()
+test_lab:group('rect:contains_point(x [int], y [int]) -> [boolean]', function()
     local box1 = rect.new(0, 0, 10, 10)
 
     test_lab:test('boundary point - corner', function()
@@ -182,7 +182,7 @@ test_lab:group('rect:contains_point ->', function()
 
 end)
 
-test_lab:group('rect:strictly_contains_point ->', function()
+test_lab:group('rect:strictly_contains_point(x [int], y [int]) -> [boolean]', function()
     local box1 = rect.new(0, 0, 10, 10)
 
     test_lab:test('boundary point - corner', function()
@@ -203,7 +203,7 @@ test_lab:group('rect:strictly_contains_point ->', function()
 
 end)
 
-test_lab:group('rect:has_y_collision ->', function()
+test_lab:group('rect:has_y_collision(r [rect]) -> [boolean]', function()
 
     local box1 = rect.new(0, 0, 10, 10)
     test_lab:test('boundary line collision - top', function()
@@ -235,7 +235,7 @@ test_lab:group('rect:has_y_collision ->', function()
     end)
 end)
 
-test_lab:group('rect:has_x_collision ->', function()
+test_lab:group('rect:has_x_collision(r [rect]) -> [boolean]', function()
     local box1 = rect.new(0, 0, 10, 10)
     test_lab:test('boundary line collision - left', function()
         assert(box1:has_x_collision(rect.new(-10, 2, 10, 5)))
@@ -266,7 +266,7 @@ test_lab:group('rect:has_x_collision ->', function()
     end)
 end)
 
-test_lab:group('rect:collide ->', function()
+test_lab:group('rect:collide(r [rect]) -> [boolean]', function()
     local box1 = rect.new(10, 10, 10, 10)
     local collision_test = function(description, other_rect, expected)
         return {desc=description, other_rect=other_rect, expected=expected}
