@@ -59,7 +59,7 @@ function list:insert_range_at(arr, idx)
 	assert(getmetatable(arr) == list)
 	assert(1 <= idx and idx <= self._len, err_idx_out_bounds)
 	for j = idx, self._len do
-		local new_idx = idx + arr._len
+		local new_idx = j + arr._len
 		rawset(self, new_idx, rawget(self, j))
 	end
 
@@ -67,15 +67,15 @@ function list:insert_range_at(arr, idx)
 		local new_idx = idx + j - 1
 		rawset(self, new_idx, rawget(arr, j))
 	end
-	self._len = self._len + count
+	self._len = self._len + arr._len
 end
 
 
 function list:index_of(e, start_idx, end_idx)
 	local s_idx = start_idx or 1
 	local e_idx = end_idx or self._len
-	assert(1 <= s_idx and s_idx <= e_idx)
-	assert(s_idx <= e_idx and e_idx <= self._len)
+	assert(1 <= s_idx and s_idx <= e_idx, err_idx_out_bounds)
+	assert(s_idx <= e_idx and e_idx <= self._len, err_idx_out_bounds)
 
 	for j = s_idx, e_idx do
 		if rawget(self, j) == e then
@@ -95,8 +95,8 @@ end
 function list:last_index_of(e, start_idx, end_idx)
 	local s_idx = start_idx or 1
 	local e_idx = end_idx or self._len
-	assert(1 <= s_idx and s_idx <= e_idx)
-	assert(s_idx <= e_idx and e_idx <= self._len)
+	assert(1 <= s_idx and s_idx <= e_idx, err_idx_out_bounds)
+	assert(s_idx <= e_idx and e_idx <= self._len, err_idx_out_bounds)
 
 	for j = e_idx, s_idx, -1 do
 		if rawget(self, j) == e then
@@ -118,7 +118,7 @@ end
 
 
 function list:remove_at(i)
-	assert(1 <= i and i <= self._len)
+	assert(1 <= i and i <= self._len, err_idx_out_bounds)
 	for j = i, self._len do
 		rawset(self, j, rawget(self, j+1))
 	end
@@ -146,8 +146,8 @@ end
 function list:remove_range_at(start_idx, remove_count)
 	local s_idx = start_idx
 	local e_idx = s_idx + remove_count
-	assert(1 <= s_idx and s_idx <= e_idx)
-	assert(s_idx <= e_idx and e_idx <= self._len)
+	assert(1 <= s_idx and s_idx <= e_idx, err_idx_out_bounds)
+	assert(s_idx <= e_idx and e_idx <= self._len, err_idx_out_bounds)
 	
 	for i = s_idx, self._len do
 		rawset(self, i, rawget(self, i + remove_count))

@@ -275,6 +275,79 @@ tl:group('list.__index(t [table], k [any]) -> [any]', function()
 	end)
 end)
 
+tl:group('list:index_of(e [any], start_idx [int], end_idx [int]) -> [int]', function()
+	local a = list.new({ 10, 2, -34, 5, -133})
+	
+	tl:test('returns the index of the target element in the array', function()
+		assert(a:index_of(2, 1, 5) == 2)
+	end)
+
+	tl:test('returns the index of the target element in the list within the specified bounds', function()
+		assert(a:index_of(-34, 3, 4) == 3)
+	end)
+
+	tl:test('start_idx defaults to the first element index when not provided', function()
+		assert(a:index_of(10) == 1)
+	end)
+
+	tl:test('end_idx defaults to the last element index when not provided', function()
+		assert(a:index_of(-133, 1) == a._len)
+	end)
+
+	tl:test('returns -1 when the target element is not in the list', function()
+		assert(a:index_of(65) == -1)
+	end)
+
+	tl:test('raises an error for start_idx = 0; list index out of bounds', function()
+		local result, err = pcall(function() return a:index_of(10, 0, 2) end)
+		assert(not result and err:find('list index out of bounds') ~= nil)
+	end)
+
+	tl:test('raises an error for start_idx = -1; list index out of bounds', function()
+		local result, err = pcall(function() return a:index_of(10, -1, 2) end)
+		assert(not result and err:find('list index out of bounds') ~= nil)
+	end)
+
+	tl:test('raises an error for start_idx > end_idx; list index out of bounds', function()
+		local result, err = pcall(function() return a:index_of(10, 2, 1) end)
+		assert(not result and err:find('list index out of bounds') ~= nil)
+	end)
+
+	tl:test('raises an error for end_idx > a._len; list index out of bounds', function()
+		local result, err = pcall(function() return a:index_of(10, 1, 10) end)
+		assert(not result and err:find('list index out of bounds') ~= nil)
+	end)
+
+end)
+
+tl:group('list:contains(e [any]) -> [bool]', function()
+	local a = list.new({ 1, -2, 13 })
+	tl:test('returns true if target element is found', function()
+		assert(a:contains(-2) == true)
+	end)
+
+	tl:test('returns false if target element is not found', function()
+		assert(a:contains(65) == false)
+	end)
+end)
+
+tl:group('list:insert_range_at(arr [table], idx [int]) ->', function()
+	tl:test('inserts list into target list at index idx', function()
+		local a = list.new({ 23, -1, 2 })
+		a:insert_range_at(list.new({2, 3, 4, 7}), 2)
+		assert(
+			a._len == 7 and
+			a[1] == 23 and 
+			a[2] == 2 and 
+			a[3] == 3 and 
+			a[4] == 4 and 
+			a[5] == 7 and
+			a[6] == -1 and
+			a[7] == 2
+		)
+	end)
+end)
+
 tl:group('list.__newindex(t [table], k [any], v [any]) ->', function()
 	tl:test('raises an error for attempting to add properties onto the list', function()
 		local a = list.new()
@@ -331,3 +404,5 @@ tl:group('Lua 5.1 (Luajit) ->', function()
 	end)
 end)
 end
+
+
