@@ -243,43 +243,11 @@ tl:group('list:remove(e [any]) ->', function()
 
 end)
 
-tl:group('list.__index(t [table], k [any]) -> [any]', function()
-	tl:test('returns the value stored at index k [int]', function()
-		local a = list.new()
-		a:insert('hello')
-		a:insert('aloha')
-		a:insert('goodbye')
-
-		assert(a[1] == 'hello' and a[2] == 'aloha' and a[3] == 'goodbye')
-	end)
-
-	tl:test('raises an error for index k, k == 0; list index out of bounds', function()
-		local a = list.new()
-		a:insert(1)
-		local result, err = pcall(function() return a[0] end)
-		assert(not result and err:find('list index out of bounds') ~= nil)
-	end)
-
-	tl:test('raises an error for index k, k < 0; list index out of bounds', function()
-		local a = list.new()
-		a:insert(1)
-		local result, err = pcall(function() return a[-1] end)
-		assert(not result and err:find('list index out of bounds') ~= nil)
-	end)
-
-	tl:test('raises an error for index k, k > inst._len; list index out of bounds', function()
-		local a = list.new()
-		a:insert(2)
-		local result, err = pcall(function() return a[a._len + 1] end)
-		assert(not result and err:find('list index out of bounds') ~= nil)
-	end)
-end)
-
 tl:group('list:index_of(e [any], start_idx [int], end_idx [int]) -> [int]', function()
-	local a = list.new({ 10, 2, -34, 5, -133})
+	local a = list.new({ 10, 2, -34, -133, 2, 7})
 	
-	tl:test('returns the index of the target element in the array', function()
-		assert(a:index_of(2, 1, 5) == 2)
+	tl:test('returns the first found index of the target element in the list', function()
+		assert(a:index_of(2, 1, 6) == 2)
 	end)
 
 	tl:test('returns the index of the target element in the list within the specified bounds', function()
@@ -291,7 +259,7 @@ tl:group('list:index_of(e [any], start_idx [int], end_idx [int]) -> [int]', func
 	end)
 
 	tl:test('end_idx defaults to the last element index when not provided', function()
-		assert(a:index_of(-133, 1) == a._len)
+		assert(a:index_of(7, 1) == 6)
 	end)
 
 	tl:test('returns -1 when the target element is not in the list', function()
@@ -345,6 +313,63 @@ tl:group('list:insert_range_at(arr [table], idx [int]) ->', function()
 			a[6] == -1 and
 			a[7] == 2
 		)
+	end)
+end)
+
+tl:group('list:remove_at(idx [int]) ->', function()
+	tl:test('removes the element at the given index and moves all elements after forwards', function()
+		local a = list.new({'hello', 'aloha', 'goodbye'})
+		a:remove_at(2)
+		assert(a._len == 2 and a[1] == 'hello' and a[2] == 'goodbye')
+	end)
+end)
+
+tl:group('list:reverse() ->', function()
+	tl:test('reverses the list', function()
+		local a = list.new({'abc', 'xyz', 'rst'})
+		a:reverse()
+		assert(a._len == 3 and a[1] == 'rst' and a[2] == 'xyz' and a[3] == 'abc')
+	end)
+end)
+
+tl:group('list:last_index_of(e [any], start_idx [int], end_idx [int]) -> [int]', function()
+	tl:test('returns the last index of the target element between the given indices', function()
+		local a = list.new({24, -2, 13, 5, 9, 5})
+		local start_idx = 1
+		local end_idx = 6
+		assert(a:last_index_of(5, start_idx, end_idx) == end_idx)
+	end)
+end)
+
+tl:group('list.__index(t [table], k [any]) -> [any]', function()
+	tl:test('returns the value stored at index k [int]', function()
+		local a = list.new()
+		a:insert('hello')
+		a:insert('aloha')
+		a:insert('goodbye')
+
+		assert(a[1] == 'hello' and a[2] == 'aloha' and a[3] == 'goodbye')
+	end)
+
+	tl:test('raises an error for index k, k == 0; list index out of bounds', function()
+		local a = list.new()
+		a:insert(1)
+		local result, err = pcall(function() return a[0] end)
+		assert(not result and err:find('list index out of bounds') ~= nil)
+	end)
+
+	tl:test('raises an error for index k, k < 0; list index out of bounds', function()
+		local a = list.new()
+		a:insert(1)
+		local result, err = pcall(function() return a[-1] end)
+		assert(not result and err:find('list index out of bounds') ~= nil)
+	end)
+
+	tl:test('raises an error for index k, k > inst._len; list index out of bounds', function()
+		local a = list.new()
+		a:insert(2)
+		local result, err = pcall(function() return a[a._len + 1] end)
+		assert(not result and err:find('list index out of bounds') ~= nil)
 	end)
 end)
 
