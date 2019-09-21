@@ -144,8 +144,11 @@ end
 
 
 function list:remove_range_at(start_idx, remove_count)
+	if remove_count == 0 then
+		return
+	end
 	local s_idx = start_idx
-	local e_idx = s_idx + remove_count
+	local e_idx = s_idx + remove_count - 1
 	assert(1 <= s_idx and s_idx <= e_idx, err_idx_out_bounds)
 	assert(s_idx <= e_idx and e_idx <= self._len, err_idx_out_bounds)
 	
