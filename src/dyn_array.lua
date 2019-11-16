@@ -1,51 +1,51 @@
-local list = {}
+local dyn_array = {}
 
 
-local err_idx_out_bounds = 'list index out of bounds'
+local err_idx_out_bounds = 'index out of bounds'
 local err_idx_invalid = 'index invalid, must be an int'
 
 
-function list.__index(t, k)
+function dyn_array.__index(t, k)
 --	print('indexing table with key', k)
 	if type(k) == 'number' then
 		assert(math.floor(k) == k, err_idx_invalid)
 		assert(0 < k and k <= t._len, err_idx_out_bounds)
 		return rawget(t, k)
 	else
-		return list[k]
+		return dyn_array[k]
 	end
 end
 
 
-function list.__newindex(t, k, v)
+function dyn_array.__newindex(t, k, v)
 --	print('new index table with key, value', k, v)
 	assert(false, '__newindex not supported, use insert* functions')
 end
 
 
-function list:length()
+function dyn_array:length()
 	return self._len
 end
 
 
-function list.new(t)
+function dyn_array.new(t)
 	local _t = t or {}
 	local a = { _len = #_t }
 	for i=1, a._len do
 		rawset(a, i, t[i])
 	end
-	setmetatable(a, list)
+	setmetatable(a, dyn_array)
 	return a
 end
 
 
-function list:insert(e)
+function dyn_array:insert(e)
 	self._len = self._len + 1
 	rawset(self, self._len, e)
 end
 
 
-function list:insert_at(e, i)
+function dyn_array:insert_at(e, i)
 	assert(1 <= i and i <= self._len, err_idx_out_bounds)
 	for j = self._len, i, -1 do
 		rawset(self, j+1, rawget(self, j))
@@ -55,8 +55,8 @@ function list:insert_at(e, i)
 end
 
 
-function list:insert_range_at(arr, idx)
-	assert(getmetatable(arr) == list)
+function dyn_array:insert_range_at(arr, idx)
+	assert(getmetatable(arr) == dyn_array)
 	assert(1 <= idx and idx <= self._len, err_idx_out_bounds)
 	for j = idx, self._len do
 		local new_idx = j + arr._len
@@ -71,7 +71,7 @@ function list:insert_range_at(arr, idx)
 end
 
 
-function list:index_of(e, start_idx, end_idx)
+function dyn_array:index_of(e, start_idx, end_idx)
 	local s_idx = start_idx or 1
 	local e_idx = end_idx or self._len
 	assert(1 <= s_idx and s_idx <= e_idx, err_idx_out_bounds)
@@ -86,13 +86,13 @@ function list:index_of(e, start_idx, end_idx)
 end
 
 
-function list:contains(e)
+function dyn_array:contains(e)
 	local idx = self:index_of(e, 1, self._len)
 	return idx ~= -1
 end
 
 
-function list:last_index_of(e, start_idx, end_idx)
+function dyn_array:last_index_of(e, start_idx, end_idx)
 	local s_idx = start_idx or 1
 	local e_idx = end_idx or self._len
 	assert(1 <= s_idx and s_idx <= e_idx, err_idx_out_bounds)
@@ -107,8 +107,8 @@ function list:last_index_of(e, start_idx, end_idx)
 end
 
 
-function list:clone()
-	local a = list.new()
+function dyn_array:clone()
+	local a = dyn_array.new()
 	for j = 1, self._len do
 		rawset(a, j, rawget(self, j))
 	end
@@ -117,7 +117,7 @@ function list:clone()
 end
 
 
-function list:remove_at(i)
+function dyn_array:remove_at(i)
 	assert(1 <= i and i <= self._len, err_idx_out_bounds)
 	for j = i, self._len do
 		rawset(self, j, rawget(self, j+1))
@@ -126,7 +126,7 @@ function list:remove_at(i)
 end
 
 
-function list:remove(e)
+function dyn_array:remove(e)
 	local found = false
 	for j = 1, self._len do
 		if not found and rawget(self, j) == e then
@@ -143,7 +143,7 @@ function list:remove(e)
 end
 
 
-function list:remove_range_at(start_idx, remove_count)
+function dyn_array:remove_range_at(start_idx, remove_count)
 	if remove_count == 0 then
 		return
 	end
@@ -160,7 +160,7 @@ function list:remove_range_at(start_idx, remove_count)
 end
 
 
-function list:clear()
+function dyn_array:clear()
 	for j = 1, self._len do
 		rawset(self, j, nil)
 	end
@@ -168,7 +168,7 @@ function list:clear()
 end
 
 
-function list:reverse()
+function dyn_array:reverse()
 	local half_len = self._len / 2
 	for j = 1, half_len do
 		local swap_idx = self._len + 1 - j
@@ -179,4 +179,4 @@ function list:reverse()
 end
 
 
-return list
+return dyn_array
