@@ -35,105 +35,105 @@ function rect.new(x, y, w, h)
     return r
 end
 
-function rect:copy()
-    return rect.new(self.x, self.y, self.w, self.h)
+function rect.copy(r)
+    return rect.new(r.x, r.y, r.w, r.h)
 end
 
-function rect:set(x, y, w, h)
+function rect.set(r, x, y, w, h)
     assert(w >= 0)
     assert(h >= 0)
-    self.x = x
-    self.y = y
-    self.w = w
-    self.h = h
+    r.x = x
+    r.y = y
+    r.w = w
+    r.h = h
 
-    self.right = x + w
-    self.left = x
-    self.top = y
-    self.bottom = y + h
+    r.right = x + w
+    r.left = x
+    r.top = y
+    r.bottom = y + h
 end
 
-function rect:set_height(h)
+function rect.set_height(r, h)
     assert(h >= 0)
-    self.h = h
-    self.bottom = self.y + h
+    r.h = h
+    r.bottom = r.y + h
 end
 
-function rect:set_width(w)
+function rect.set_width(r, w)
     assert(w >= 0)
-    self.w = w
-    self.right = self.x + w
+    r.w = w
+    r.right = r.x + w
 end
 
-function rect:set_x(x)
-    self.x = x
-    self.left = x
-    self.right = x + self.w
+function rect.set_x(r, x)
+    r.x = x
+    r.left = x
+    r.right = x + r.w
 end
 
-function rect:set_y(y)
-    self.y = y
-    self.top = y
-    self.bottom = y + self.h
+function rect.set_y(r, y)
+    r.y = y
+    r.top = y
+    r.bottom = y + r.h
 end
 
-function rect:set_left(v)
-    self.left = v
-    self.x = v
-    self.right = x + self.w
+function rect.set_left(r, v)
+    r.left = v
+    r.x = v
+    r.right = x + r.w
 end
 
-function rect:set_right(v)
-    local pos = v - self.w
-    self.right = v
-    self.left = pos
-    self.x = pos
+function rect.set_right(r, v)
+    local pos = v - r.w
+    r.right = v
+    r.left = pos
+    r.x = pos
 end
 
-function rect:set_top(v)
-    self.y = v
-    self.top = v
-    self.bottom = v + self.h
+function rect.set_top(r, v)
+    r.y = v
+    r.top = v
+    r.bottom = v + r.h
 end
 
-function rect:set_bottom(v)
-    local pos = v - self.h
-    self.bottom = v
-    self.top = pos
-    self.y = pos
+function rect.set_bottom(r, v)
+    local pos = v - r.h
+    r.bottom = v
+    r.top = pos
+    r.y = pos
 end
 
-function rect:contains_point(x, y)
-    return (self.left <= x and x <= self.right) and
-           (self.top <= y and y <= self.bottom)
+function rect.contains_point(r, x, y)
+    return (r.left <= x and x <= r.right) and
+           (r.top <= y and y <= r.bottom)
 end
 
 -- ignore points on the border
-function rect:strictly_contains_point(x, y)
-    return (self.left < x and x < self.right) and
-           (self.top < y and y < self.bottom)
+function rect.strictly_contains_point(r, x, y)
+    return (r.left < x and x < r.right) and
+           (r.top < y and y < r.bottom)
 end
 
-function rect:has_y_collision(other_rect)
-    local self_bottom_between_y_bounds = other_rect.top <= self.bottom and self.bottom <= other_rect.bottom
-    local self_top_between_y_bounds = other_rect.top <= self.top and self.top <= other_rect.bottom
-    local other_bottom_between_y_bounds = self.top <= other_rect.bottom and other_rect.bottom <= self.bottom
-    local other_top_between_y_bounds = self.top <= other_rect.top and other_rect.top <= self.bottom
+function rect.has_y_collision(r1, r2)
+    local self_bottom_between_y_bounds = r2.top <= r1.bottom and r1.bottom <= r2.bottom
+    local self_top_between_y_bounds = r2.top <= r1.top and r1.top <= r2.bottom
+    local other_bottom_between_y_bounds = r1.top <= r2.bottom and r2.bottom <= r1.bottom
+    local other_top_between_y_bounds = r1.top <= r2.top and r2.top <= r1.bottom
     local has_y_col = self_top_between_y_bounds or self_bottom_between_y_bounds or other_bottom_between_y_bounds or other_top_between_y_bounds
     return has_y_col
 end
 
-function rect:has_x_collision(other_rect)
-    local self_left_between_x_bounds = other_rect.left <= self.left and self.left <= other_rect.right
-    local self_right_between_x_bounds = other_rect.left <= self.right and self.right <= other_rect.right
-    local other_left_between_x_bounds = self.left <= other_rect.left and other_rect.left <= self.right
-    local other_right_between_x_bounds = self.left <= other_rect.right and other_rect.right <= self.right
+function rect.has_x_collision(r1, r2)
+    local self_left_between_x_bounds = r2.left <= r1.left and r1.left <= r2.right
+    local self_right_between_x_bounds = r2.left <= r1.right and r1.right <= r2.right
+    local other_left_between_x_bounds = r1.left <= r2.left and r2.left <= r1.right
+    local other_right_between_x_bounds = r1.left <= r2.right and r2.right <= r1.right
     local has_x_col = self_left_between_x_bounds or self_right_between_x_bounds or other_left_between_x_bounds or other_right_between_x_bounds
     return has_x_col
 end
 
-function rect:collide(other_rect)
-    return self:has_x_collision(other_rect) and self:has_y_collision(other_rect)
+function rect.collide(r1, r2)
+    return rect.has_x_collision(r1, r2) and rect.has_y_collision(r1, r2)
 end
 
 return rect
