@@ -18,7 +18,7 @@ jobs:
         luaVersion: ${{matrix.luaVersion}}
         
     - name: Navigate to src
-      run: cd src
+      run: cd ./src
       
     - name: Run tests
       run: lua test_runner.lua -d ..\tests
