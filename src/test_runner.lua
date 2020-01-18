@@ -89,7 +89,7 @@ for _i, group_report in pairs(test_report.group_reports) do
                 print('.', test_report.description)
             end
         else
-            print('x', test_report.description, test_report.errors)
+            io.stderr:write('x', test_report.description, test_report.errors)
         end
     end
 end
