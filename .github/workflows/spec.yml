@@ -5,12 +5,10 @@ on: [push]
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      LUA_PATH: ./src/?.lua
 
     steps:
     - uses: actions/checkout@v1
-    - name: ls current dir
-      run: ls -a
-    - name: set LUA_PATH
-      run: export LUA_PATH=./src/?.lua
     - name: show env vars
       run: printenv
