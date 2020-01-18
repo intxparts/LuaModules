@@ -10,5 +10,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - name: show env vars
-      run: printenv
+    - uses: leafo/gh-actions-lua@v5
+      with:
+        luaVersion: "5.3"
+    - name: Run tests
+      run: lua ./src/test_runner.lua -d ./tests
