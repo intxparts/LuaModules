@@ -79,6 +79,7 @@ end
 print('running unit tests...')
 local time_start = timer.ctime(test_runner)
 
+local has_errors = false
 for _i, group_report in pairs(test_report.group_reports) do
     if data['verbose'] then
         print(group_report.description)
@@ -89,7 +90,8 @@ for _i, group_report in pairs(test_report.group_reports) do
                 print('.', test_report.description)
             end
         else
-            io.stderr:write(string.format('x	%q %q\n', test_report.description, test_report.errors))
+			has_errors = true
+            print('x', test_report.description, test_report.errors)
         end
     end
 end
@@ -100,3 +102,6 @@ print(test_report.summary.passed, ' tests passed')
 print(test_report.summary.failed, ' tests failed')
 print(string.format('%.6f seconds to execute', time_start))
 
+if has_errors then
+	os.exit(false)
+end
