@@ -8,5 +8,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - name: please show directory structure
+    - name: ls current dir
+      run: ls -a
+    - name: navigate to src
+      run: cd ./src
+    - name: ls src dir
       run: ls -a
