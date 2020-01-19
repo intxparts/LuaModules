@@ -1,5 +1,7 @@
 # Lua Modules
 
+![](https://github.com/actions/hello-world/workflows/Build/badge.svg)
+
 A collection of cross platform, pure Lua modules designed to work together.
 Currently built & tested with Lua 5.3.4 and LuaJIT 2.0.5.
 
