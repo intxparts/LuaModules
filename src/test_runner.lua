@@ -36,7 +36,8 @@ end
 
 args:add_command('files',       'string',  {'-f', '--files'},       '+',   false, 'Run specific unit test files.')
 args:add_command('directories', 'string',  {'-d', '--directories'}, '+',   false, 'Run all unit test files in a set of directories.')
-args:add_command('tags',        'string',  {'-t', '--tags'},        '+',   false, 'Run only the tests with the provided tags.')
+args:add_command('include_tags','string',  {'-it','--include-tags'},'+',   false, 'Include only the tests with the provided tags.')
+args:add_command('exclude_tags','string',  {'-et','--exclude-tags'},'+',   false, 'Exclude tests with the provided tags.')
 args:add_command('help',        'boolean', {'-h', '--help', '/?' },  0,    false, 'Display all available commands.')
 args:add_command('verbose',     'boolean', {'-v', '--verbose'},      0,    false, 'Show all test output')
 
@@ -66,14 +67,19 @@ if data['directories'] then
     end
 end
 
-local tags = {}
-if data['tags'] then
-    tags = data['tags']
+local include_tags = nil
+if data['include_tags'] then
+    include_tags = data['include_tags']
+end
+
+local exclude_tags = nil 
+if data['exclude_tags'] then
+	exclude_tags = data['exclude_tags']
 end
 
 local test_report = nil
 local function test_runner()
-    test_report = test_lab:run(tags)
+    test_report = test_lab:run(include_tags, exclude_tags)
 end
 
 print('running unit tests...')

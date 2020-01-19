@@ -14,4 +14,4 @@ jobs:
       with:
         luaVersion: "5.3"
     - name: Run tests
-      run: lua ./src/test_runner.lua -d ./tests
+      run: lua ./src/test_runner.lua -d ./tests -et efail

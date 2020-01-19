@@ -48,7 +48,7 @@ function test_lab:group(description, fn, tags)
         tests = {},
         after_eaches = {},
         afters = {},
-        tags = tags or {}
+        tags = tags or {},
     }
 
     table.insert(self._current.groups, child)
@@ -87,7 +87,25 @@ function test_lab:after_each(fn)
     table.insert(self._current.after_eaches, fn)
 end
 
-function test_lab:run(tags)
+local function group_has_any_matching_tags(group_tags, tags)
+	for _, t in pairs(tags) do
+		if tbl.contains_value(group_tags, t) then
+			return true
+		end
+	end
+	return false
+end
+
+local function group_has_no_matching_tags(group_tags, tags)
+	for _, t in pairs(tags) do
+		if tbl.contains_value(group_tags, t) then
+			return false
+		end
+	end
+	return true
+end
+
+function test_lab:run(include_tags, exclude_tags)
     local report = full_test_report()
     local sa_group = group_test_report('standalone tests ->')
 
@@ -110,14 +128,16 @@ function test_lab:run(tags)
     table.insert(report.group_reports, sa_group)
 
     local groups = self._current.groups
-    if tags then
-        local function group_tags_contain_all_input_tags(_, group)
-            return tbl.all(tags, function(_, tag)
-                return tbl.contains_value(group.tags, tag)
-            end)
-        end
-        groups = tbl.filter(self._current.groups, group_tags_contain_all_input_tags)
+    if include_tags then
+        groups = tbl.filter(groups, function(_, g)
+			return group_has_any_matching_tags(g.tags, include_tags)
+		end)
     end
+	if exclude_tags then
+		groups = tbl.filter(groups, function(_, g)
+			return group_has_no_matching_tags(g.tags, exclude_tags)
+		end)
+	end
     for _i, v in pairs(groups) do
 
         local group_report = group_test_report(v.description)
