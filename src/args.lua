@@ -1,6 +1,3 @@
-local tbl = require('tbl')
-local str = require('str')
-
 local args = {}
 args.__index = args
 args._cmds = {}
@@ -8,10 +5,49 @@ args._i = 1
 
 local valid_arg_types = {'string', 'number', 'boolean'}
 
+local function str_to_bool(s)
+    if type(s) ~= 'string' then
+        return nil
+    end
+    if s == 'false' then
+        return false
+    elseif s == 'true' then
+        return true
+    else
+        return nil
+    end
+end
+
+local function str_to_int(s)
+    local number = tonumber(s)
+    if number == nil then
+        return nil
+    end
+
+    return math.floor(number)
+end
+
+local function tbl_contains_value(t, val)
+	for _, v in pairs(t) do
+		if v == val then
+			return true
+		end
+	end
+	return false
+end
+
+local function tbl_count(t)
+	local i = 0	
+	for _k, _v in pairs(t) do
+		i = i + 1
+	end
+	return i
+end
+
 function args:add_command(cmd_name, type_info, flags, nargs, required, help, default)
     assert(type(cmd_name) == 'string')
     assert(type(type_info) == 'string')
-    assert(tbl.contains_value(valid_arg_types, type_info), 'invalid argument type')
+    assert(tbl_contains_value(valid_arg_types, type_info), 'invalid argument type')
     assert(type(nargs) == 'string' or type(nargs) == 'number')
     assert(flags ~= nil and type(flags) == 'table', 'flags must be a valid table')
     assert(type(required) == 'boolean')
@@ -45,11 +81,11 @@ local function get_arg_converter_fn(type_info_str)
     if type_info_str == 'number' then
         return tonumber
     elseif type_info_str == 'integer' then
-        return str.to_int
+        return str_to_int
     elseif type_info_str == 'string' then
         return function(x) return x end
     elseif type_info_str == 'boolean' then
-        return str.to_bool
+        return str_to_bool
     else
         return function(x) return nil end
     end
@@ -79,7 +115,8 @@ local function collect_cmd_args(cmd_flags, i, inputs, matching_cmd, cmds)
     local cmd_args = {}
     local num_args = 1
     -- process up until the next command is identified
-    while num_args < max_nargs and i < tbl.count(inputs) and cmd_flags[inputs[i]] == nil and inputs[i] ~= nil do
+	local num_inputs = tbl_count(inputs)
+    while num_args < max_nargs and i < num_inputs and cmd_flags[inputs[i]] == nil and inputs[i] ~= nil do
         local value = converter_fn(inputs[i])
         if not value then cmd_type_mismatch_error(inputs[i], matching_cmd) end
         cmd_args[num_args] = value
@@ -125,7 +162,7 @@ function args:parse(inputs)
 
     local cmds = {}
     local i = 1
-    local num_inputs = tbl.count(inputs) + 1
+    local num_inputs = tbl_count(inputs) + 1
     while i < num_inputs do
         local matching_cmd_idx = cmd_flags[inputs[i]]
         if matching_cmd_idx then
