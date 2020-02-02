@@ -5,33 +5,33 @@ local args = require('args')
 local str = require('str')
 
 local function run_files(files)
-    for _, f in pairs(files) do
-        if not string.match(f, '.lua') then
-            goto continue_files
-        end
+	for _, f in pairs(files) do
+		if not string.match(f, '.lua') then
+			goto continue_files
+		end
 
-        if not path.exists(f) then
-            print(string.format('provided file path %q does not exist', f))
-            return
-        end
-        -- might need to wrap this in pcall
-        dofile(f)
-        ::continue_files::
-    end
+		if not path.exists(f) then
+			print(string.format('provided file path %q does not exist', f))
+			return
+		end
+		-- might need to wrap this in pcall
+		dofile(f)
+		::continue_files::
+	end
 end
 
 local function print_help()
-    local str_format = "%-15s | %-3s | %-25s | %-60s"
-    print(string.format(str_format, "Argument", "Req", "Flags", "Description"))
-    print(str.rep('-', 100))
-    for i, v in ipairs(args._cmds) do
-        local required_str = ' '
-        if v.required then
-            required_str = '.'
-        end
-        local flag_str = table.concat(v.flags, ",  ")
-        print(string.format(str_format, v.name, required_str, flag_str, v.help))
-    end
+	local str_format = "%-15s | %-3s | %-25s | %-60s"
+	print(string.format(str_format, "Argument", "Req", "Flags", "Description"))
+	print(str.rep('-', 100))
+	for i, v in ipairs(args._cmds) do
+		local required_str = ' '
+		if v.required then
+			required_str = '.'
+		end
+		local flag_str = table.concat(v.flags, ",  ")
+		print(string.format(str_format, v.name, required_str, flag_str, v.help))
+	end
 end
 
 args:add_command('files',       'string',  {'-f', '--files'},       '+',   false, 'Run specific unit test files.')
@@ -43,33 +43,33 @@ args:add_command('verbose',     'boolean', {'-v', '--verbose'},      0,    false
 
 local result, data = pcall(function() return args:parse(arg) end)
 if not result then
-    print(data)
-    return
+	print(data)
+	return
 end
 
 if data['help'] then
-    print_help()
-    return
+	print_help()
+	return
 end
 
 if data['files'] then
-    run_files(data['files'])
+	run_files(data['files'])
 end
 
 if data['directories'] then
-    for _, d in pairs(data['directories']) do
-        if not path.exists(d) then
-            print(string.format('provided directory path %q does not exist', d))
-            return
-        end
-        local files = path.list_files(d, true)
-        run_files(files)
-    end
+	for _, d in pairs(data['directories']) do
+		if not path.exists(d) then
+			print(string.format('provided directory path %q does not exist', d))
+			return
+		end
+		local files = path.list_files(d, true)
+		run_files(files)
+	end
 end
 
 local include_tags = nil
 if data['include_tags'] then
-    include_tags = data['include_tags']
+	include_tags = data['include_tags']
 end
 
 local exclude_tags = nil 
@@ -79,7 +79,7 @@ end
 
 local test_report = nil
 local function test_runner()
-    test_report = test_lab:run(include_tags, exclude_tags)
+	test_report = test_lab:run(include_tags, exclude_tags)
 end
 
 print('running unit tests...')
@@ -87,19 +87,19 @@ local time_start = timer.ctime(test_runner)
 
 local has_errors = false
 for _i, group_report in pairs(test_report.group_reports) do
-    if data['verbose'] then
-        print(group_report.description)
-    end
-    for _j, test_report in pairs(group_report.details) do
-        if test_report.result then
-            if data['verbose'] then
-                print('.', test_report.description)
-            end
-        else
+	if data['verbose'] then
+		print(group_report.description)
+	end
+	for _j, test_report in pairs(group_report.details) do
+		if test_report.result then
+			if data['verbose'] then
+				print('.', test_report.description)
+			end
+		else
 			has_errors = true
-            print('x', test_report.description, test_report.errors)
-        end
-    end
+			print('x', test_report.description, test_report.errors)
+		end
+	end
 end
 
 print('\n~- Test Summary -~')
