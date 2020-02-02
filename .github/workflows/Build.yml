@@ -4,11 +4,19 @@ on: [push]
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        include:
+        - os: ubuntu-latest
+          LUA_BIN_PATH: ./bin/Linux/lua-5.3.5/
+        - os: windows-latest
+          LUA_BIN_PATH: .\bin\Windows\lua-5.3.4\
     env:
       LUA_PATH: ./src/?.lua
 
     steps:
     - uses: actions/checkout@v1
     - name: Run tests
-      run: ./bin/Linux/lua-5.3.5/lua ./src/test_runner.lua -d ./tests -et efail
+      run: ${{matrix.LUA_BIN_PATH}}lua ./src/test_runner.lua -d ./tests -et efail
