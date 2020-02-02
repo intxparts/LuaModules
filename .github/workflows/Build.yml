@@ -10,7 +10,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - name: Install dependencies
-      run: sudo apt install libreadline5
+    - uses: leafo/gh-actions-lua@v5
+      with:
+        luaVersion: "5.3"
     - name: Run tests
-      run: ./bin/Linux/lua-5.3.4/lua ./src/test_runner.lua -d ./tests -et efail
+      run: lua ./src/test_runner.lua -d ./tests -et efail
+
