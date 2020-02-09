@@ -1,5 +1,5 @@
 local tbl = require('tbl')
-local test_lab = {}
+local utest = {}
 
 local function test_report(description, result, errors)
 	return {
@@ -32,12 +32,12 @@ local function full_test_report()
 	}
 end
 
-test_lab._current = {
+utest._current = {
 	groups = {},
 	tests = {} -- support for tests outside of groups
 }
 
-function test_lab:group(description, fn, tags)
+function utest:group(description, fn, tags)
 	assert(type(fn) == 'function')
 	local child = {
 		description = description,
@@ -58,7 +58,7 @@ function test_lab:group(description, fn, tags)
 
 end
 
-function test_lab:test(description, fn)
+function utest:test(description, fn)
 	assert(type(fn) == 'function')
 	local test = {
 		description = description,
@@ -67,22 +67,22 @@ function test_lab:test(description, fn)
 	table.insert(self._current.tests, test)
 end
 
-function test_lab:before(fn)
+function utest:before(fn)
 	assert(type(fn) == 'function')
 	table.insert(self._current.befores, fn)
 end
 
-function test_lab:after(fn)
+function utest:after(fn)
 	assert(type(fn) == 'function')
 	table.insert(self._current.afters, fn)
 end
 
-function test_lab:before_each(fn)
+function utest:before_each(fn)
 	assert(type(fn) == 'function')
 	table.insert(self._current.before_eaches, fn)
 end
 
-function test_lab:after_each(fn)
+function utest:after_each(fn)
 	assert(type(fn) == 'function')
 	table.insert(self._current.after_eaches, fn)
 end
@@ -105,7 +105,7 @@ local function group_has_no_matching_tags(group_tags, tags)
 	return true
 end
 
-function test_lab:run(include_tags, exclude_tags)
+function utest:run(include_tags, exclude_tags)
 	local report = full_test_report()
 	local sa_group = group_test_report('standalone tests ->')
 
@@ -179,4 +179,4 @@ function test_lab:run(include_tags, exclude_tags)
 	return report
 end
 
-return test_lab
+return utest

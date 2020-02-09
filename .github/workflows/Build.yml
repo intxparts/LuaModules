@@ -19,4 +19,4 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Run tests
-      run: ${{matrix.LUA_BIN_PATH}}lua ./src/test_runner.lua -d ./tests -et efail
+      run: ${{matrix.LUA_BIN_PATH}}lua ./src/utest_runner.lua -d ./tests -et efail

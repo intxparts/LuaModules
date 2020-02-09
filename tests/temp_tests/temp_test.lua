@@ -1,9 +1,9 @@
 package.path = package.path .. '; ..\\..\\?.lua; ..\\..\\src\\?.lua'
 
-local test_lab = require('test_lab')
+local ut = require('utest')
 
-test_lab:group('nothing', function()
-	test_lab:test('temporary', function()
+ut:group('nothing', function()
+	ut:test('temporary', function()
 		print("temp test")
 	end)
 end)

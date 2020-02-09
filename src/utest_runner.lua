@@ -1,5 +1,5 @@
 local path = require('path')
-local test_lab = require('test_lab')
+local utest = require('utest')
 local timer = require('timer')
 local args = require('args')
 local str = require('str')
@@ -79,7 +79,7 @@ end
 
 local test_report = nil
 local function test_runner()
-	test_report = test_lab:run(include_tags, exclude_tags)
+	test_report = utest:run(include_tags, exclude_tags)
 end
 
 print('running unit tests...')
