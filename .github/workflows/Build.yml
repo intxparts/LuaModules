@@ -11,10 +11,10 @@ jobs:
         include:
         - os: ubuntu-latest
           LUA_BIN_PATH: ./bin/Linux/lua-5.3.5/
-          SHELL: bash
+          SHELL_OVERRIDE: bash
         - os: windows-latest
           LUA_BIN_PATH: .\bin\Windows\lua-5.3.4\
-          SHELL: cmd
+          SHELL_OVERRIDE: cmd
     env:
       LUA_PATH: ./src/?.lua
 
@@ -22,4 +22,4 @@ jobs:
     - uses: actions/checkout@v1
     - name: Run tests
       run: ${{matrix.LUA_BIN_PATH}}lua ./src/utest_runner.lua -d ./tests -et efail
-      shell: ${{matrix.SHELL}}
+      shell: ${{matrix.SHELL_OVERRIDE}}
