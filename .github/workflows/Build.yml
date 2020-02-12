@@ -13,10 +13,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - name: Run tests
+    - name: Run tests on Linux
       if: matrix.os == 'ubuntu-latest'
-        run: ./bin/Linux/lua-5.3.5/lua ./src/utest_runner.lua -d ./tests -et efail
-        shell: bash
+      run: ./bin/Linux/lua-5.3.5/lua ./src/utest_runner.lua -d ./tests -et efail
+      shell: bash
+    - name: Run tests on Windows
       if: matrix.os == 'windows-latest'
-        run: .\bin\Windows\lua-5.3.4\lua.exe ./src/utest_runner.lua -d ./tests -et efail
-        shell: cmd
+      run: .\bin\Windows\lua-5.3.4\lua.exe ./src/utest_runner.lua -d ./tests -et efail
+      shell: cmd
