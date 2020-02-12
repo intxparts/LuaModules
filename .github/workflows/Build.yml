@@ -8,11 +8,6 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
-        include:
-        - os: ubuntu-latest
-          LUA_BIN_PATH: ./bin/Linux/lua-5.3.5/
-        - os: windows-latest
-          LUA_BIN_PATH: .\bin\Windows\lua-5.3.4\
     env:
       LUA_PATH: ./src/?.lua
 
@@ -20,8 +15,8 @@ jobs:
     - uses: actions/checkout@v1
     - name: Run tests
       if: matrix.os == 'ubuntu-latest'
-        run: ${{matrix.LUA_BIN_PATH}}lua ./src/utest_runner.lua -d ./tests -et efail
+        run: ./bin/Linux/lua-5.3.5/lua ./src/utest_runner.lua -d ./tests -et efail
         shell: bash
       if: matrix.os == 'windows-latest'
-        run: ${{matrix.LUA_BIN_PATH}}lua ./src/utest_runner.lua -d ./tests -et efail
+        run: .\bin\Windows\lua-5.3.4\lua.exe ./src/utest_runner.lua -d ./tests -et efail
         shell: cmd
