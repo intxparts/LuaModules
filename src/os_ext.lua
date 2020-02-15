@@ -1,20 +1,25 @@
 local os_ext = {}
 
-os_ext.platforms = { 
-	unix = 'unix', 
-	windows = 'windows' 
+
+os_ext.platforms = {
+	unix = 'unix',
+	windows = 'windows'
 }
+
 
 os_ext.path_separator = package.config:sub(1, 1)
 
-local _separator_platform_table = { 
-	['/'] = os_ext.platforms.unix, 
-	['\\'] = os_ext.platforms.windows 
+
+local _separator_platform_table = {
+	['/'] = os_ext.platforms.unix,
+	['\\'] = os_ext.platforms.windows
 }
+
 
 os_ext.platform = _separator_platform_table[os_ext.path_separator]
 os_ext.is_windows = os_ext.platform == os_ext.platforms.windows
 os_ext.is_unix = os_ext.platform == os_ext.platforms.unix
+
 
 -- Returns a table of results from a command string being invoked
 function os_ext.run_command(command)
@@ -30,5 +35,5 @@ function os_ext.run_command(command)
 	return results
 end
 
-return os_ext
 
+return os_ext
