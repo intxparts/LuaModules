@@ -169,9 +169,10 @@ end
 
 
 function dyn_array:reverse()
-	local half_len = self._len / 2
+	local length = self._len
+	local half_len = length / 2
 	for j = 1, half_len do
-		local swap_idx = self._len + 1 - j
+		local swap_idx = length + 1 - j
 		local tmp = rawget(self, j)
 		rawset(self, j, rawget(self, swap_idx))
 		rawset(self, swap_idx, tmp)
