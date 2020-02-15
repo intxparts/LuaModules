@@ -1,5 +1,23 @@
-local tbl = require('tbl')
 local utest = {}
+
+local function tbl_contains_value(t, val)
+	for _, v in pairs(t) do
+		if v == val then
+			return true
+		end
+	end
+	return false
+end
+
+local function tbl_filter(t, callable)
+	local r = {}
+	for k, v in pairs(t) do
+		if callable(k, v) then
+			table.insert(r, v)
+		end
+	end
+	return r
+end
 
 local function test_report(description, result, errors)
 	return {
@@ -89,7 +107,7 @@ end
 
 local function group_has_any_matching_tags(group_tags, tags)
 	for _, t in pairs(tags) do
-		if tbl.contains_value(group_tags, t) then
+		if tbl_contains_value(group_tags, t) then
 			return true
 		end
 	end
@@ -98,7 +116,7 @@ end
 
 local function group_has_no_matching_tags(group_tags, tags)
 	for _, t in pairs(tags) do
-		if tbl.contains_value(group_tags, t) then
+		if tbl_contains_value(group_tags, t) then
 			return false
 		end
 	end
@@ -129,12 +147,12 @@ function utest:run(include_tags, exclude_tags)
 
 	local groups = self._current.groups
 	if include_tags then
-		groups = tbl.filter(groups, function(_, g)
+		groups = tbl_filter(groups, function(_, g)
 			return group_has_any_matching_tags(g.tags, include_tags)
 		end)
 	end
 	if exclude_tags then
-		groups = tbl.filter(groups, function(_, g)
+		groups = tbl_filter(groups, function(_, g)
 			return group_has_no_matching_tags(g.tags, exclude_tags)
 		end)
 	end
