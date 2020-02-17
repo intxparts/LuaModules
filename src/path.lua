@@ -1,4 +1,5 @@
 local os_ext = require('os_ext')
+local str = require('str')
 local path = {}
 
 
@@ -95,11 +96,24 @@ function path.list_files(root_directory, include_subdirectories)
 
 	local command = nil
 	if os_ext.is_windows then
-		command = _wincmd_listfiles(root_directory, include_subdirectories)
+		local command = _wincmd_listfiles(root_directory, include_subdirectories)
+		local files = os_ext.run_command(command)
+		-- when /s (include subdirectories) is not used, dir
+		-- does not include the directory path in the output
+		if not include_subdirectories then
+			local is_path_escaped = root_directory:sub(-1, -1) == os_ext.path_separator
+			if not is_path_escaped then
+				root_directory = root_directory .. os_ext.path_separator
+			end
+			for k, _ in pairs(files) do
+				files[k] = root_directory .. files[k]
+			end
+		end
+		return files
 	else
 		command = _unixcmd_listfiles(root_directory, include_subdirectories)
+		return os_ext.run_command(command)
 	end
-	return os_ext.run_command(command)
 end
 
 
@@ -108,13 +122,25 @@ function path.list_dir(root_directory, include_subdirectories)
 	assert(type(root_directory), 'string')
 	assert(path.exists(root_directory), 'directory does not exist')
 
-	local command = nil
 	if os_ext.is_windows then
-		command = _wincmd_listdir(root_directory, include_subdirectories)
+		local command = _wincmd_listdir(root_directory, include_subdirectories)
+		local folders = os_ext.run_command(command)
+		-- when /s (include subdirectories) is not used, dir
+		-- does not include the directory path in the output
+		if not include_subdirectories then
+			local is_path_escaped = root_directory:sub(-1, -1) == os_ext.path_separator
+			if not is_path_escaped then
+				root_directory = root_directory .. os_ext.path_separator
+			end
+			for k, _ in pairs(folders) do
+				folders[k] = root_directory .. folders[k]
+			end
+		end
+		return folders
 	else
-		command = _unixcmd_listdir(root_directory, include_subdirectories)
+		local command = _unixcmd_listdir(root_directory, include_subdirectories)
+		return os_ext.run_command(command)
 	end
-	return os_ext.run_command(command)
 end
 
 
