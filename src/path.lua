@@ -33,7 +33,7 @@ end
 local function _unixcmd_listfiles(root_directory, include_subdirectories)
 	local depth = ''
 	if not include_subdirectories then
-		depth = '-maxdepth 1'
+		depth = '-maxdepth 7'
 	end
 	local command = string.format('find "%s" %s -type f', root_directory, depth)
 	return command
@@ -56,7 +56,7 @@ end
 local function _unixcmd_listdir(root_directory, include_subdirectories)
 	local depth = ''
 	if not include_subdirectories then
-		depth = '-maxdepth 1'
+		depth = '-maxdepth 7'
 	end
 	local command = string.format('find "%s" "%s" -type d', root_directory, depth)
 	return command
