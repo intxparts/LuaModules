@@ -71,7 +71,7 @@ ut:group('path.list_files(root_directory [string], include_subdirectories [bool]
 		
 		ut:test('valid root directory', function()
 			local files = path.list_files('/bin/', false)
-			assert(tbl.contains_value(files, 'ls'))
+			assert(tbl.contains_value(files, '/bin/ls'))
 		end)
 		
 		ut:test('valid root directory searching subdirectories', function()
