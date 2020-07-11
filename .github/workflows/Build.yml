@@ -19,5 +19,5 @@ jobs:
       shell: bash
     - name: Run tests on Windows
       if: matrix.os == 'windows-latest'
-      run: .\bin\Windows\lua-5.3.4\lua.exe ./src/utest_runner.lua -d ./tests -et efail
+      run: .\bin\Windows\lua-5.4.0\lua.exe .\src\utest_runner.lua -d .\tests -et efail
       shell: cmd
