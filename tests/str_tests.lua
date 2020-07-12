@@ -188,7 +188,7 @@ end)
 
 ut:group('str.first_index_of(s [string], e [any]) -> [int]', function()
 	
-	ut:test('s = nonstring', function()
+	ut:test('raises error when s is non-string', function()
 		local success, err = pcall(function() str.first_index_of({'hello'},'hello') end)
 		assert(not success)
 	end)
@@ -208,7 +208,35 @@ ut:group('str.first_index_of(s [string], e [any]) -> [int]', function()
 		assert(result == -1)
 	end)
 	
-	ut:test('first_index_of("C:\\Windows\\System32\\cmd.exe", "\\")', function()
+	ut:test('multiple instances', function()
 		assert(str.first_index_of("C:\\Windows\\System32\\cmd.exe", "\\") == 3)
 	end)
+	
+	ut:test('', function()
+		
+	end)
+end)
+
+ut:group('str.last_index_of(s [string], e [any]) -> [int]', function()
+	ut:test('raises error when s is non-string', function()
+		local success, err = pcall(function() str.last_index_of({'hello'}, 'hello') end)
+		assert(not success)
+	end)
+	
+	ut:test('s = empty string', function()
+		local result = str.last_index_of('', '')
+		assert(result == -1)
+	end)
+	
+	ut:test('s = length 1 string', function()
+		local result = str.last_index_of('.', '.')
+		assert(result == 1)
+	end)
+	
+	ut:test('e -> length 0 string', function()
+		local result = str.last_index_of('.', '')
+		assert(result == -1)
+	end)
+	
+	
 end)

@@ -64,9 +64,9 @@ function str.last_index_of(s, e)
 	if s_len < 1 or e_len < 1 or e_len > s_len then
 		return -1
 	end
-	
+
 	local i = s_len
-	while i > 1 do
+	while i > 0 do
 		local _idx = i - e_len + 1
 		local _s = s:sub(_idx, i)
 		if _s == e then

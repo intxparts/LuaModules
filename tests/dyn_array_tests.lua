@@ -305,10 +305,10 @@ ut:group('dyn_array:insert_range_at(arr [table], idx [int]) ->', function()
 		a:insert_range_at(dyn_array.new({2, 3, 4, 7}), 2)
 		assert(
 			a._len == 7 and
-			a[1] == 23 and 
-			a[2] == 2 and 
-			a[3] == 3 and 
-			a[4] == 4 and 
+			a[1] == 23 and
+			a[2] == 2 and
+			a[3] == 3 and
+			a[4] == 4 and
 			a[5] == 7 and
 			a[6] == -1 and
 			a[7] == 2
