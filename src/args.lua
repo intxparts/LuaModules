@@ -113,14 +113,15 @@ local function collect_cmd_args(cmd_flags, i, inputs, matching_cmd, cmds)
 	end
 	local converter_fn = get_arg_converter_fn(matching_cmd.type_info)
 	local cmd_args = {}
-	local num_args = 1
+	local num_args = 0
 	-- process up until the next command is identified
 	local num_inputs = tbl_count(inputs)
 	while num_args < max_nargs and i < num_inputs and cmd_flags[inputs[i]] == nil and inputs[i] ~= nil do
 		local value = converter_fn(inputs[i])
 		if not value then cmd_type_mismatch_error(inputs[i], matching_cmd) end
-		cmd_args[num_args] = value
-		num_args = num_args + 1
+		local next = num_args + 1
+		cmd_args[next] = value
+		num_args = next
 		i = i + 1
 	end
 
