@@ -119,7 +119,7 @@ end
 
 -- need to potentially add filtering
 function path.list_dir(root_directory, include_subdirectories)
-	assert(type(root_directory), 'string')
+	assert(type(root_directory) == 'string')
 	assert(path.exists(root_directory), 'directory does not exist')
 
 	if os_ext.is_windows then
@@ -141,6 +141,25 @@ function path.list_dir(root_directory, include_subdirectories)
 		local command = _unixcmd_listdir(root_directory, include_subdirectories)
 		return os_ext.run_command(command)
 	end
+end
+
+function path.combine(directory_path, filepath)
+	assert(type(directory_path) == 'string')
+	assert(type(filepath) == 'string')
+
+	return string.format('%s%s%s', directory_path, os_ext.path_separator, filepath)
+end
+
+
+function path.get_filename(filepath)
+	assert(type(filepath) == 'string')
+
+	local index = str.last_index_of(filepath, os_ext.path_separator)
+	if index == -1 then
+		return ''
+	end
+	local filename = filepath:sub(index + 1, string.len(filepath))
+	return filename
 end
 
 

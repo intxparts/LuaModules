@@ -102,3 +102,94 @@ ut:group('path.list_dir(root_directory [string], include_subdirectories[bool]) -
 	end
 
 end, {'integration'})]]--
+
+ut:group('path.get_filename(filepath [string]) -> [string]', function()
+	if ose.is_windows then
+
+		ut:test('filepath must be a string: nil', function()
+			local filepath = nil
+			local result, err = pcall(function() return path.get_filename(filepath) end)
+			assert(result == false)
+		end)
+
+		ut:test('empty string', function()
+			local filepath = ''
+			local result = path.get_filename(filepath)
+			assert(result == '')
+		end)
+
+		ut:test('.\\hello.txt -> hello.txt', function()
+			local filepath = '.\\hello.txt'
+			local result = path.get_filename(filepath)
+			assert(result == 'hello.txt')
+		end)
+
+		ut:test('InvalidPath//\\myFile.lua -> myFile.lua', function()
+			local filepath = 'InvalidPath//\\myFile.lua'
+			local result = path.get_filename(filepath)
+			assert(result == 'myFile.lua')
+		end)
+
+		ut:test('C:\\test\\world.py -> world.py', function()
+			local filepath = 'C:\\test\\world.py'
+			local result = path.get_filename(filepath)
+			assert(result == 'world.py')
+		end)
+
+		ut:test('C://test//world.py -> ""', function()
+			local filepath = 'C://test//world.py'
+			local result = path.get_filename(filepath)
+			assert(result == '')
+		end)
+
+		ut:test('//myFile.lua -> ""', function()
+			local filepath = '//myFile.lua'
+			local result = path.get_filename(filepath)
+			assert(result == '')
+		end)
+
+	elseif ose.is_unix then
+
+		ut:test('filepath must be a string: nil', function()
+			local filepath = nil
+			local result, err = pcall(function() return path.get_filename(filepath) end)
+			assert(result == false)
+		end)
+
+		ut:test('empty string', function()
+			local filepath = ''
+			local result = path.get_filename(filepath)
+			assert(result == '')
+		end)
+
+		ut:test('.\\hello.txt -> ""', function()
+			local filepath = '.\\hello.txt'
+			local result = path.get_filename(filepath)
+			assert(result == '')
+		end)
+
+		ut:test('InvalidPath//\\myFile.lua -> myFile.lua', function()
+			local filepath = 'InvalidPath//\\myFile.lua'
+			local result = path.get_filename(filepath)
+			assert(result == '\\myFile.lua')
+		end)
+
+		ut:test('C:\\test\\world.py -> ""', function()
+			local filepath = 'C:\\test\\world.py'
+			local result = path.get_filename(filepath)
+			assert(result == '')
+		end)
+
+		ut:test('C://test//world.py -> world.py', function()
+			local filepath = 'C://test//world.py'
+			local result = path.get_filename(filepath)
+			assert(result == 'world.py')
+		end)
+
+		ut:test('//myFile.lua -> myFile.lua', function()
+			local filepath = '//myFile.lua'
+			local result = path.get_filename(filepath)
+			assert(result == 'myFile.lua')
+		end)
+	end
+end, {'integration'})
