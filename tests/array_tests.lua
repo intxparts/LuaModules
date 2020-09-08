@@ -10,6 +10,18 @@ ut:group('array.new() -> [array]', function()
 		local result, err = pcall(function() return a[1] end)
 		assert(not result)
 	end)
+
+    ut:test('initialize with provided number table', function()
+        local a = array.new({ -3, 0, 2 })
+        assert(a._len == 3)
+        assert(a[1] == -3 and a[2] == 0 and a[3] == 2)
+    end)
+
+    ut:test('initialize with provided string table', function()
+        local a = array.new({ 'its', 'the', 'final', 'countdown'})
+        assert(a._len == 4)
+        assert(a[1] == 'its' and a[2] == 'the' and a[3] == 'final' and a[4] == 'countdown')
+    end)
 end)
 
 ut:group('array:insert(e [any]) ->', function()
@@ -221,24 +233,24 @@ ut:group('array:remove(e [any]) ->', function()
 		assert(a._len == 2 and a[1] == true and a[2] == true)
 	end)
 
-	ut:test('does nothing when target element [int] is not in the array', function()
+	ut:test('raises error when target element [int] is not in the array', function()
 		local a = array.new()
 		a:insert(1)
 		a:insert(2)
 
-		a:remove(3)
-		assert(a._len == 2 and a[1] == 1 and a[2] == 2)
+        local result, err = pcall(function() a:remove(3) end)
+		assert(not result and err:find('element not found') ~= nil)
 	end)
 
-	ut:test('does nothing when target element [table] is not in the array', function()
+	ut:test('raises error when target element [table] is not in the array', function()
 		local a = array.new()
 		local pt1 = {x=0}
 		local pt2 = {x=1}
 		a:insert(pt1)
 		a:insert(pt2)
 
-		a:remove({x=0})
-		assert(a._len == 2 and a[1] == pt1 and a[2] == pt2)
+        local result, err = pcall(function() a:remove({x=0}) end)
+        assert(not result and err:find('element not found') ~= nil)
 	end)
 
 end)
