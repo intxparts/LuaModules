@@ -127,20 +127,13 @@ end
 
 
 function array:remove(e)
-	local found_idx = -1
-	for j = 1, self._len do
-		if rawget(self, j) == e then
-			found_idx = j
-            break
-		end
+	local found_idx = self:index_of(e)
+	assert(found_idx ~= -1, 'element not found')
+
+	for j = found_idx, self._len do
+		rawset(self, j, rawget(self, j+1))
 	end
-
-    assert(found_idx ~= -1, 'element not found')
-
-    for j = found_idx, self._len do
-        rawset(self, j, rawget(self, j+1))
-    end
-    self._len = self._len - 1
+	self._len = self._len - 1
 end
 
 
