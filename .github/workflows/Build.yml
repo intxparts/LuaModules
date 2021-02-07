@@ -7,14 +7,14 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-20.04, windows-latest]
+        os: [ubuntu-18.04, windows-latest]
     env:
       LUA_PATH: ./src/?.lua
 
     steps:
     - uses: actions/checkout@v1
     - name: Run tests on Linux
-      if: matrix.os == 'ubuntu-20.04'
+      if: matrix.os == 'ubuntu-18.04'
       run: ./bin/Linux/lua-5.4.0/lua ./src/utest_runner.lua -d ./tests -et efail
       shell: bash
     - name: Run tests on Windows
