@@ -64,7 +64,7 @@ ut:group('path.list_files(root_directory [string], include_subdirectories [bool]
 				local files = path.list_files('C:\\ShouldNotExist\\', false)
 			end)
 			assert(not success)
-			assert(string.find(err, 'directory does not exist') ~= nil)
+			assert(string.find(err, 'directory "C:\\ShouldNotExist\\" does not exist') ~= nil)
 		end)
 		
 	elseif ose.is_unix then
