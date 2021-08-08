@@ -78,12 +78,12 @@ if data['exclude_tags'] then
 end
 
 local test_report = nil
-local function test_runner()
+local function run_tests()
 	test_report = utest:run(include_tags, exclude_tags)
 end
 
 print('running unit tests...')
-local time_start = timer.ctime(test_runner)
+local time_start = timer.ctime(run_tests)
 
 local has_errors = false
 for _i, group_report in pairs(test_report.group_reports) do
