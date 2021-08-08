@@ -65,27 +65,37 @@ end
 
 -- returns path string of the current (present) working directory
 function path.get_cwd()
-	local result = nil
+	local result = false
+	local output = nil
+	local err_code = 0
 	if os_ext.is_windows then
-		result = os_ext.run_command('cd')
+		result, output, err_code = os_ext.run_command('cd')
 	else
-		result = os_ext.run_command('pwd')
+		result, output, err_code = os_ext.run_command('pwd')
 	end
-	return result[1]
+	return output[1]
 end
 
 
 -- returns whether the target_path exists or not
 function path.exists(target_path)
 	assert(type(target_path) == 'string')
-	local result = nil
-	if os_ext.is_windows then
-		result = os_ext.run_command(string.format('if exist "%s" (echo true) else (echo false)', target_path))[1] == 'true'
-	else
-		result = os_ext.run_command(string.format('if test -f "%s"; then echo true; else echo false; fi', target_path))[1] == 'true' or
-			os_ext.run_command(string.format('if test -d "%s"; then echo true; else echo false; fi', target_path))[1] == 'true'
+	local eval_output = function(result, output)
+		return result and output[1] == 'true'
 	end
-	return result
+
+	if os_ext.is_windows then
+		local result, output, err_code = os_ext.run_command(string.format('if exist "%s" (echo true) else (echo false)', target_path))
+		return eval_output(result, output)
+	else
+		local result, output, err_code = os_ext.run_command(string.format('if test -f "%s"; then echo true; else echo false; fi', target_path))
+		if eval_output(result, output) then
+			return true
+		end
+
+		result, output, err_code = os_ext.run_command(string.format('if test -d "%s"; then echo true; else echo false; fi', target_path))
+		return eval_output(result, output)
+	end
 end
 
 
@@ -97,7 +107,7 @@ function path.list_files(root_directory, include_subdirectories)
 	local command = nil
 	if os_ext.is_windows then
 		local command = _wincmd_listfiles(root_directory, include_subdirectories)
-		local files = os_ext.run_command(command)
+		local result, files, err_code = os_ext.run_command(command)
 		-- when /s (include subdirectories) is not used, dir
 		-- does not include the directory path in the output
 		if not include_subdirectories then
@@ -112,7 +122,8 @@ function path.list_files(root_directory, include_subdirectories)
 		return files
 	else
 		command = _unixcmd_listfiles(root_directory, include_subdirectories)
-		return os_ext.run_command(command)
+		local result, files, err_code = os_ext.run_command(command)
+		return files
 	end
 end
 
@@ -124,7 +135,7 @@ function path.list_dir(root_directory, include_subdirectories)
 
 	if os_ext.is_windows then
 		local command = _wincmd_listdir(root_directory, include_subdirectories)
-		local folders = os_ext.run_command(command)
+		local result, folders, err_code = os_ext.run_command(command)
 		-- when /s (include subdirectories) is not used, dir
 		-- does not include the directory path in the output
 		if not include_subdirectories then
@@ -139,7 +150,8 @@ function path.list_dir(root_directory, include_subdirectories)
 		return folders
 	else
 		local command = _unixcmd_listdir(root_directory, include_subdirectories)
-		return os_ext.run_command(command)
+		local result, folders, err_code = os_ext.run_command(command)
+		return folders
 	end
 end
 

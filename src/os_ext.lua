@@ -31,8 +31,8 @@ function os_ext.run_command(command)
 		results[idx] = line
 		idx = idx + 1
 	end
-	pfile:close()
-	return results
+	local r, msg, err_code = pfile:close()
+	return r == true, results, err_code, msg
 end
 
 
